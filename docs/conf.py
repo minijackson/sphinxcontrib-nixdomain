@@ -16,6 +16,7 @@ release = "0.1.0"
 
 extensions = [
     "sphinxcontrib_nixdomain",
+    "sphinx.ext.githubpages",
     "sphinx.ext.intersphinx",
 ]
 
@@ -33,3 +34,4 @@ intersphinx_mapping = {
 
 html_theme = "furo"
 html_static_path = ["_static"]
+html_baseurl = "https://minijackson.github.io/sphinxcontrib-nixdomain/"
