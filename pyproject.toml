@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sphinxcontrib-nixdomain"
+version = "0.1.0"
+description = 'Nix domain and autodoc for Sphinx'
+readme = "README.md"
+requires-python = ">=3.8"
+license = "EUPL-1.2"
+keywords = ["sphinx", "nix"]
+authors = [{ name = "Minijackson", email = "minijackson@riseup.net" }]
+maintainers = [{ name = "Minijackson", email = "minijackson@riseup.net" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: Sphinx",
+  "Framework :: Sphinx :: Domain",
+  "Framework :: Sphinx :: Extension",
+  "License :: OSI Approved",
+  "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Documentation :: Sphinx",
+]
+dependencies = ["sphinx>=7.0.0"]
+
+[project.urls]
+Documentation = "https://github.com/minijackson/sphinxcontrib-nixdomain#readme"
+Issues = "https://github.com/minijackson/sphinxcontrib-nixdomain/issues"
+Source = "https://github.com/minijackson/sphinxcontrib-nixdomain"
+
+[tool.hatch.envs.docs]
+extra-dependencies = ["furo"]
+
+[tool.hatch.envs.types]
+extra-dependencies = ["mypy>=1.0.0"]
+
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/sphinxcontrib_nixdomain tests}"
+
+[tool.coverage.run]
+source_pkgs = ["sphinxcontrib_nixdomain", "tests"]
+branch = true
+parallel = true
+omit = ["src/sphinxcontrib_nixdomain/__about__.py"]
+
+[tool.coverage.paths]
+sphinxcontrib_nixdomain = [
+  "src/sphinxcontrib_nixdomain",
+  "*/sphinxcontrib-nixdomain/src/sphinxcontrib_nixdomain",
+]
+tests = ["tests", "*/sphinxcontrib-nixdomain/tests"]
+
+[tool.coverage.report]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+
+[tool.ruff.lint]
+select = ["ALL"]
