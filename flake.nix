@@ -20,7 +20,10 @@
     {
       devShells.x86_64-linux.default =
         let
-          arg = project.renderers.withPackages { inherit python; };
+          arg = project.renderers.withPackages {
+            inherit python;
+            extras = [ "docs" ];
+          };
           pythonEnv = python.withPackages arg;
         in
         pkgs.mkShell {
