@@ -10,6 +10,7 @@ from sphinx.domains import Index, IndexEntry
 
 # TODO: make a class for Module / ModuleOption
 
+
 class ModuleOptionDirective(ObjectDescription):
     """Describe a module option.
 
@@ -45,8 +46,8 @@ class ModuleOptionDirective(ObjectDescription):
 
     def add_target_and_index(self, name_cls, sig, signode):
         signode["ids"].append(f"nix-module-opt-" + signode["fullname"])
-        nix = self.env.get_domain("nix")
 
+        nix = self.env.get_domain("nix")
         nix.add_module_option(signode["fullname"], {"type": self.options.get("type")})
 
     def before_content(self) -> None:
@@ -60,7 +61,13 @@ class ModuleOptionDirective(ObjectDescription):
         else:
             self.env.ref_context.pop("nix:module-opt")
 
+    def _object_hierarchy_parts(self, signode: addnodes.desc_signature) -> tuple[str]:
+        return tuple(signode["fullname"].split("."))
+
     def _toc_entry_name(self, signode: addnodes.desc_signature) -> str:
+        if not signode.get("_toc_parts"):
+            return ""
+
         return signode["fullname"]
 
 
@@ -96,4 +103,3 @@ class ModuleOptionIndex(Index):
         content = sorted(content.items())
 
         return content, True
-

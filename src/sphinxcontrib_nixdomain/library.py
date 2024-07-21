@@ -34,8 +34,8 @@ class FunctionDirective(ObjectDescription):
 
     def add_target_and_index(self, name_cls, sig, signode):
         signode["ids"].append(f"nix-function-" + signode["fullname"])
-        nix = self.env.get_domain("nix")
 
+        nix = self.env.get_domain("nix")
         nix.add_binding(signode["fullname"], "Function", {})
 
     # def before_content(self) -> None:
@@ -49,7 +49,13 @@ class FunctionDirective(ObjectDescription):
     #     else:
     #         self.env.ref_context.pop("nix:module-opt")
 
+    def _object_hierarchy_parts(self, signode: addnodes.desc_signature) -> tuple[str]:
+        return tuple(signode["fullname"].split("."))
+
     def _toc_entry_name(self, signode: addnodes.desc_signature) -> str:
+        if not signode.get("_toc_parts"):
+            return ""
+
         return signode["fullname"]
 
 
