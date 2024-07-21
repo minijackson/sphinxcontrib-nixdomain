@@ -24,7 +24,13 @@ if TYPE_CHECKING:
 class NixDomain(Domain):
     name = "nix"
     label = "Nix"
-    roles = {"ref": XRefRole()}
+    roles = {
+        "bind": XRefRole(),
+        # TODO:
+        # "func": XRefRole(),
+        "modopt": XRefRole(),
+        "ref": XRefRole(),
+    }
     directives = {
         "module-opt": ModuleOptionDirective,
         "function": FunctionDirective,
@@ -48,10 +54,22 @@ class NixDomain(Domain):
     def get_module_options(self):
         yield from self.data["module-opts"]
 
+    def get_objects(self):
+        yield from self.get_bindings()
+        yield from self.get_module_options()
+
     def resolve_xref(self, env, fromdocname, builder, typ, target, node, contnode):
+        object_getter = None
+        if typ == "bind":
+            object_getter = self.get_bindings
+        elif typ == "modopt":
+            object_getter = self.get_module_options
+        elif typ == "ref":
+            object_getter = self.get_objects
+
         match = [
             (docname, anchor)
-            for name, sig, typ, docname, anchor, prio in self.get_objects()
+            for name, sig, typ, docname, anchor, prio in object_getter()
             if sig == target
         ]
 
@@ -59,9 +77,9 @@ class NixDomain(Domain):
             todocname = match[0][0]
             targ = match[0][1]
             return make_refnode(builder, fromdocname, todocname, targ, contnode, targ)
-
         else:
-            print(f"Awww, found nothing for {target}")
+            # TODO: print a proper warning?
+            print(f"Awww, found nothing for {target} and type {typ}")
             return None
 
     def add_binding(self, path: str, typ: str, arguments):
