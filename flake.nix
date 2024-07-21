@@ -10,7 +10,12 @@
   };
 
   outputs =
-    { nixpkgs, pyproject-nix, ... }:
+    {
+      self,
+      nixpkgs,
+      pyproject-nix,
+      ...
+    }:
     let
       project = pyproject-nix.lib.project.loadPyproject { projectRoot = ./.; };
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
@@ -33,10 +38,18 @@
           ];
         };
 
-      packages.x86_64-linux.default =
-        let
-          attrs = project.renderers.buildPythonPackage { inherit python; };
-        in
-        python.pkgs.buildPythonPackage attrs;
+      packages.x86_64-linux = {
+        default = self.packages.x86_64-linux.sphinxcontrib-nixdomain;
+        sphinxcontrib-nixdomain =
+          let
+            attrs = project.renderers.buildPythonPackage {
+              inherit python;
+              extras = [ "docs" ];
+            };
+          in
+          (python.pkgs.buildPythonPackage attrs).overrideAttrs (old: {
+            nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ python.pkgs.sphinxHook ];
+          });
+      };
     };
 }
