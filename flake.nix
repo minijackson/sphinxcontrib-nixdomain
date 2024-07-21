@@ -15,7 +15,7 @@
       project = pyproject-nix.lib.project.loadPyproject { projectRoot = ./.; };
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
       # For some reason, build crashes on doctree-read event with Python3.12
-      python = pkgs.python311;
+      python = pkgs.python3;
     in
     {
       devShells.x86_64-linux.default =
