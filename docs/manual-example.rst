@@ -23,6 +23,13 @@ NixOS-like module options
    Example of ref links:
 
    - :nix:ref:`services.foo.enable`
+   - :nix:modopt:`services.bar.enable`
+   - :nix:bind:`toString`
+
+   And failing examples:
+
+   - :nix:bind:`services.foo.enable`
+   - :nix:modopt:`toString`
 
 Service Foo
 ^^^^^^^^^^^
