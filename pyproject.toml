@@ -31,13 +31,16 @@ classifiers = [
 ]
 dependencies = ["sphinx>=7.0.0"]
 
+[project.optional-dependencies]
+docs = ["furo"]
+
 [project.urls]
 Documentation = "https://github.com/minijackson/sphinxcontrib-nixdomain#readme"
 Issues = "https://github.com/minijackson/sphinxcontrib-nixdomain/issues"
 Source = "https://github.com/minijackson/sphinxcontrib-nixdomain"
 
 [tool.hatch.envs.docs]
-extra-dependencies = ["furo"]
+features = ["docs"]
 
 [tool.hatch.envs.types]
 extra-dependencies = ["mypy>=1.0.0"]
