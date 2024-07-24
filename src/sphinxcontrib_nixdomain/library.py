@@ -1,12 +1,22 @@
+"""Handle a Nix library API, such as functions and other bindings."""
+
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Any, Callable, ClassVar
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
 
 from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Index, IndexEntry
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from sphinx.addnodes import desc_signature
+    from sphinx.directives import ObjDescT
+
+    from . import NixDomain
 
 
 class FunctionDirective(ObjectDescription):
@@ -18,7 +28,8 @@ class FunctionDirective(ObjectDescription):
         "type": directives.unchanged,
     }
 
-    def handle_signature(self, sig: str, signode: addnodes.desc_signature):
+    def handle_signature(self, sig: str, signode: desc_signature) -> str:
+        """Print the function given its signature."""
         # TODO: attribute path to the function
         signode["fullname"] = sig
 
@@ -32,10 +43,16 @@ class FunctionDirective(ObjectDescription):
 
         return sig
 
-    def add_target_and_index(self, name_cls, sig, signode):
+    def add_target_and_index(
+        self,
+        _name_cls: ObjDescT,
+        _sig: str,
+        signode: desc_signature,
+    ) -> None:
+        """Add the given function to the index, and create a target."""
         signode["ids"].append(f"nix-function-" + signode["fullname"])
 
-        nix = self.env.get_domain("nix")
+        nix = cast("NixDomain", self.env.get_domain("nix"))
         nix.add_binding(signode["fullname"], "Function", {})
 
     # def before_content(self) -> None:
@@ -49,10 +66,10 @@ class FunctionDirective(ObjectDescription):
     #     else:
     #         self.env.ref_context.pop("nix:module-opt")
 
-    def _object_hierarchy_parts(self, signode: addnodes.desc_signature) -> tuple[str]:
+    def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
         return tuple(signode["fullname"].split("."))
 
-    def _toc_entry_name(self, signode: addnodes.desc_signature) -> str:
+    def _toc_entry_name(self, signode: desc_signature) -> str:
         if not signode.get("_toc_parts"):
             return ""
 
@@ -66,11 +83,17 @@ class LibraryIndex(Index):
     localname = "Nix Library Index"
     shortname = "library"
 
-    def generate(self, docnames=None):
-        content = defaultdict(list)
+    def generate(
+        self,
+        _docnames: Iterable[str] | None = None,
+    ) -> tuple[list[tuple[str, list[IndexEntry]]], bool]:
+        """Get entries for the index."""
+        content: defaultdict[str, list[IndexEntry]] = defaultdict(list)
+
+        nix = cast("NixDomain", self.domain)
 
         # sort the list of recipes in alphabetical order
-        bindings = self.domain.get_bindings()
+        bindings = list(nix.get_bindings())
         bindings = sorted(bindings, key=lambda binding: binding[0])
 
         # generate the expected output, shown below, from the above using the
@@ -88,6 +111,6 @@ class LibraryIndex(Index):
             )
 
         # convert the dict to the sorted list of tuples expected
-        content = sorted(content.items())
+        content_ = sorted(content.items())
 
-        return content, True
+        return content_, True
