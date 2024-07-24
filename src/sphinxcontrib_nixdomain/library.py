@@ -25,19 +25,35 @@ class FunctionDirective(ObjectDescription):
     has_content = True
     required_arguments = 1
     option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
+        "noindex": directives.flag,
         "type": directives.unchanged,
     }
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the function given its signature."""
+        signode["noindex"] = noindex = "noindex" in self.options
+
         # TODO: attribute path to the function
-        signode["fullname"] = sig
+        signode["fullname"] = fullname = sig
 
         # parent_opts = self.env.ref_context.setdefault("nix:module-opt", [])
         # signode["fullname"] = ".".join(parent_opts + [sig])
 
         # TODO: arguments
         # TODO: return type
+
+        if not noindex:
+            signode += addnodes.index(
+                entries=[
+                    (
+                        "single",
+                        fullname,
+                        _function_target(signode["fullname"]),
+                        "",
+                        None,
+                    ),
+                ],
+            )
 
         signode += addnodes.desc_name(text=sig)
 
@@ -50,7 +66,7 @@ class FunctionDirective(ObjectDescription):
         signode: desc_signature,
     ) -> None:
         """Add the given function to the index, and create a target."""
-        signode["ids"].append(f"nix-function-" + signode["fullname"])
+        signode["ids"].append(_function_target(signode["fullname"]))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
         nix.add_binding(signode["fullname"], "Function", {})
@@ -76,8 +92,15 @@ class FunctionDirective(ObjectDescription):
         return signode["fullname"]
 
 
+def _function_target(fullname: str) -> str:
+    """Return a target for referencing a function."""
+    return f"nix-function-{fullname}"
+
+
 class LibraryIndex(Index):
     """Index over an API library."""
+
+    # TODO: register as a page in order to be able to include the index in a toctree
 
     name = "libindex"
     localname = "Nix Library Index"

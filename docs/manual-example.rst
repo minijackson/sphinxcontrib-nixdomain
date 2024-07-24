@@ -87,6 +87,7 @@ Service Bar
 
 .. nix:module-opt:: services.bar
    :type: submodule
+   :noindex:
 
    .. nix:module-opt:: enable
 

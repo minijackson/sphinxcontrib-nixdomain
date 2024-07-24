@@ -30,15 +30,31 @@ class ModuleOptionDirective(ObjectDescription):
     has_content = True
     required_arguments = 1
     option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
+        "noindex": directives.flag,
         "type": directives.unchanged,
     }
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the module option given its signature."""
+        signode["noindex"] = noindex = "noindex" in self.options
+
         parent_opts = self.env.ref_context.setdefault("nix:module-opt", [])
-        signode["fullname"] = ".".join(parent_opts + [sig])
+        signode["fullname"] = fullname = ".".join([*parent_opts, sig])
 
         sig_names = sig.split(".")
+
+        if not noindex:
+            signode += addnodes.index(
+                entries=[
+                    (
+                        "single",
+                        fullname,
+                        _module_option_target(signode["fullname"]),
+                        "",
+                        None,
+                    ),
+                ],
+            )
 
         for el in sig_names[:-1]:
             signode += addnodes.desc_addname(text=el)
@@ -62,10 +78,10 @@ class ModuleOptionDirective(ObjectDescription):
         signode: desc_signature,
     ) -> None:
         """Add the given module option to the index, and create a target."""
-        signode["ids"].append(f"nix-module-opt-" + signode["fullname"])
+        signode["ids"].append(_module_option_target(signode["fullname"]))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_module_option(signode["fullname"], {"type": self.options.get("type")})
+        nix.add_module_option(signode["fullname"], {})
 
     def before_content(self) -> None:
         """Insert content before a module option.
@@ -96,6 +112,11 @@ class ModuleOptionDirective(ObjectDescription):
             return ""
 
         return signode["fullname"]
+
+
+def _module_option_target(fullname: str) -> str:
+    """Return a target for referencing a module option."""
+    return f"nix-module-opt-{fullname}"
 
 
 class ModuleOptionIndex(Index):
