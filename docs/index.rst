@@ -14,14 +14,14 @@ NixOS-like module options,
 Nix packages,
 using the Sphinx documentation ecosystem.
 
-.. toctree::
-   :caption: Contents:
-   :maxdepth: 2
-
-   manual-example
-
 .. _Sphinx: https://www.sphinx-doc.org/
 .. _Sphinx domain: https://www.sphinx-doc.org/en/master/usage/domains/index.html
+
+.. toctree::
+   :caption: Examples:
+   :maxdepth: 2
+
+   examples/manual-example
 
 Indices and tables
 ------------------

@@ -46,7 +46,7 @@ html_theme_options = {
     "source_branch": "main",
     "source_directory": "docs/",
     "footer_icons": [
-                {
+        {
             "name": "GitHub",
             "url": "https://github.com/minijackson/sphinxcontrib-nixdomain",
             "html": """
