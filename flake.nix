@@ -32,7 +32,6 @@
           arg = project.renderers.withPackages {
             inherit python;
             extras = [ "docs" ];
-            extrasAttrMappings.docs = "nativeBuildInputs";
           };
           pythonEnv = python.withPackages arg;
         in
