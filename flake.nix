@@ -18,16 +18,21 @@
     }:
     let
       project = pyproject-nix.lib.project.loadPyproject { projectRoot = ./.; };
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      # For some reason, build crashes on doctree-read event with Python3.12
-      python = pkgs.python3;
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+        overlays = [ self.overlays.default ];
+      };
     in
     {
       devShells.x86_64-linux.default =
         let
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          python = pkgs.python3;
+
           arg = project.renderers.withPackages {
             inherit python;
             extras = [ "docs" ];
+            extrasAttrMappings.docs = "nativeBuildInputs";
           };
           pythonEnv = python.withPackages arg;
         in
@@ -39,17 +44,27 @@
         };
 
       packages.x86_64-linux = {
+        inherit (pkgs.python3.pkgs) sphinxcontrib-nixdomain;
         default = self.packages.x86_64-linux.sphinxcontrib-nixdomain;
-        sphinxcontrib-nixdomain =
-          let
-            attrs = project.renderers.buildPythonPackage {
-              inherit python;
-              extras = [ "docs" ];
-            };
-          in
-          (python.pkgs.buildPythonPackage attrs).overrideAttrs (old: {
-            nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ python.pkgs.sphinxHook ];
-          });
+      };
+
+      overlays.default = _final: prev: {
+        pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+          (final: _prev: {
+            sphinxcontrib-nixdomain =
+              let
+                inherit (final) python;
+                attrs = project.renderers.buildPythonPackage {
+                  inherit python;
+                  extras = [ "docs" ];
+                  extrasAttrMappings.docs = "nativeBuildInputs";
+                };
+              in
+              (python.pkgs.buildPythonPackage attrs).overrideAttrs (old: {
+                nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ python.pkgs.sphinxHook ];
+              });
+          })
+        ];
       };
     };
 }
