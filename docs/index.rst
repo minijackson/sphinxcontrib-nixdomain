@@ -21,6 +21,7 @@ using the Sphinx documentation ecosystem.
    :caption: Examples:
    :maxdepth: 2
 
+   examples/autodoc-example
    examples/manual-example
 
 Indices and tables

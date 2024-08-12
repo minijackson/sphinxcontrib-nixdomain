@@ -1,6 +1,8 @@
 Manual example
 ==============
 
+.. TODO: explain more, present functions used
+
 Functions
 ---------
 

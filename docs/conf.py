@@ -58,3 +58,7 @@ html_theme_options = {
         },
     ],
 }
+
+# -- Options for the Nix domain ----------------------------------------------
+
+nix_options_json_files = ["./options.json"]
