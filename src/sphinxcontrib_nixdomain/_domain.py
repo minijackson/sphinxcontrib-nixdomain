@@ -37,6 +37,7 @@ object_data = tuple[str, str, str, str, str, int]
 @dataclass
 class AutoOptionDoc:
     name: str
+    loc: list[str]
     typ: str | None
     description: str | None
     default: str | None

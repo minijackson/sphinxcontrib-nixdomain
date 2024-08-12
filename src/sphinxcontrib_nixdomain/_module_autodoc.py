@@ -13,12 +13,13 @@ from sphinx.util.docutils import SphinxDirective
 from .module import ModuleOptionDirective
 
 if TYPE_CHECKING:
-    from ._domain import NixDomain
+    from ._domain import AutoOptionDoc, NixDomain
 
 
 logger = logging.getLogger(__name__)
 
 # TODO: internal, visible, read_only, related_packages, configurable links to source
+
 
 class NixAutoOptionDirective(SphinxDirective):
     has_content = False
@@ -97,4 +98,44 @@ class NixAutoOptionDirective(SphinxDirective):
 
 
 class NixAutoModuleDirective(SphinxDirective):
-    pass
+    has_content = False
+    required_arguments = 1
+
+    def run(self) -> list[nodes.Node]:
+        nix: NixDomain = self.env.get_domain("nix")
+
+        module = self.arguments[0]
+        # TODO: don't split where quoted
+        module_loc = module.split(".")
+
+        def _is_part_of_module(option: AutoOptionDoc) -> bool:
+            return option.loc[: len(module_loc)] == module_loc
+
+        options = [
+            name
+            for name, option in nix.auto_options_doc.items()
+            if _is_part_of_module(option)
+        ]
+
+        if options == []:
+            logger.warning("No options found for module: '%s'", module)
+            return []
+
+        result = []
+
+        for option in options:
+            result += NixAutoOptionDirective(
+                "",
+                arguments=[option],
+                options={},
+                content=None,
+                lineno=self.lineno,
+                content_offset=self.content_offset,
+                block_text=self.block_text,
+                state=self.state,
+                state_machine=self.state_machine,
+            ).run()
+
+        print(result)
+
+        return result

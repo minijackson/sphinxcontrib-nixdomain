@@ -1,6 +1,6 @@
 { lib, pkgs, ... }:
 {
-  options.services.foo = {
+  options.services.autofoo = {
     enable = lib.mkEnableOption "the Foo service";
 
     package = lib.mkPackageOption pkgs "hello" { };

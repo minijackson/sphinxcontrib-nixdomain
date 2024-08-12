@@ -14,7 +14,7 @@ rec {
       let
         name = lib.showOption opt.loc;
         docOption = {
-          # inherit (opt) loc;
+          inherit (opt) loc;
           inherit name;
           description = opt.description or null;
           declarations = lib.filter (x: x != lib.unknownModule) opt.declarations;

@@ -1,1 +1,4 @@
-[ ./foo.nix ]
+[
+  ./autobar.nix
+  ./autofoo.nix
+]

@@ -6,8 +6,12 @@ Autodoc examples
 NixOS-like module options
 -------------------------
 
-.. nix:autooption:: services.foo.enable
-.. nix:autooption:: services.foo.settings
-.. nix:autooption:: services.foo.settings.baz
+Using ``autooption``
+~~~~~~~~~~~~~~~~~~~~
 
-.. .. nix:automodule:: hello
+.. nix:autooption:: services.autobar.package
+
+Using ``automodule``
+~~~~~~~~~~~~~~~~~~~~
+
+.. nix:automodule:: services.autofoo
