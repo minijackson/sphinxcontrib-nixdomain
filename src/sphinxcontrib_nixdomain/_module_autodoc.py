@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from docutils import nodes
 from docutils.statemachine import StringList, string2lines
@@ -27,7 +27,7 @@ class NixAutoOptionDirective(SphinxDirective):
     required_arguments = 1
 
     def run(self) -> list[nodes.Node]:
-        nix: NixDomain = self.env.get_domain("nix")
+        nix = cast("NixDomain", self.env.get_domain("nix"))
 
         name = self.arguments[0]
 
@@ -40,7 +40,7 @@ class NixAutoOptionDirective(SphinxDirective):
 
         option = nix.auto_options_doc[name]
 
-        description = None
+        description = StringList()
         if option.description is not None:
             description = StringList(
                 string2lines(
@@ -87,7 +87,9 @@ class NixAutoOptionDirective(SphinxDirective):
             )
 
         if option.declarations != []:
-            declaration_nodes = [nodes.term("Declared in", "Declared in")]
+            declaration_nodes: list[nodes.Element] = [
+                nodes.term("Declared in", "Declared in")
+            ]
             for decl in option.declarations:
                 decl_para = nodes.paragraph("", decl)
                 declaration_nodes += [nodes.definition("", decl_para)]
@@ -103,7 +105,7 @@ class NixAutoModuleDirective(SphinxDirective):
     required_arguments = 1
 
     def run(self) -> list[nodes.Node]:
-        nix: NixDomain = self.env.get_domain("nix")
+        nix = cast("NixDomain", self.env.get_domain("nix"))
 
         module = self.arguments[0]
         # TODO: don't split where quoted
@@ -129,7 +131,7 @@ class NixAutoModuleDirective(SphinxDirective):
                 "",
                 arguments=[option],
                 options={},
-                content=None,
+                content=StringList(),
                 lineno=self.lineno,
                 content_offset=self.content_offset,
                 block_text=self.block_text,

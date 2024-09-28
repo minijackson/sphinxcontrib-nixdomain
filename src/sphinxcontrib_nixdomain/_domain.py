@@ -145,7 +145,7 @@ class NixDomain(Domain):
         """Get all entities in this domain."""
         yield from self.data["options"]
 
-    def get_objects(self) -> Generator[RefEntity]:
+    def get_objects(self) -> Generator[object_data]:
         """Get all entities in this domain.
 
         Returns a tuple, as needed by Sphinx.
@@ -196,7 +196,7 @@ class NixDomain(Domain):
         )
         return None
 
-    def add_binding(self, path: str, typ: str, _arguments: dict[str, str]) -> None:
+    def add_binding(self, path: str, typ: EntityType, _arguments: dict[str, str]) -> None:
         """Add a new binding to the domain."""
         name = f"nix.function.{path}"
         anchor = f"nix-function-{path}"

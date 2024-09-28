@@ -10,6 +10,8 @@ from sphinx import addnodes
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Index, IndexEntry
 
+from ._utils import EntityType
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
@@ -69,7 +71,7 @@ class FunctionDirective(ObjectDescription):
         signode["ids"].append(_function_target(signode["fullname"]))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_binding(signode["fullname"], "Nix function", {})
+        nix.add_binding(signode["fullname"], EntityType.FUNCTION, {})
 
     # def before_content(self) -> None:
     #     module_opts = self.env.ref_context.setdefault("nix:option", [])
