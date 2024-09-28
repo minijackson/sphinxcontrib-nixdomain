@@ -137,20 +137,28 @@ class OptionsIndex(Index):
 
         # sort the list of recipes in alphabetical order
         options = list(nix.get_options())
-        options = sorted(options, key=lambda option: option.signature)
+        options = sorted(options)
 
         # generate the expected output, shown below, from the above using the
         # first letter of the recipe as a key to group thing
         #
         # TODO: use the "top" module as key?
-        for _name, dispname, typ, docname, anchor, _priority in options:
-            entries = content.setdefault(dispname[0].lower(), [])
+        for option in options:
+            entries = content.setdefault(option.path[0].lower(), [])
             # No need to handle nesting,
             # Sphinx currently support only one level of nesting,
             # which would be weird with Nix module options
             entries.append(
                 # name, subtype, docname, anchor, extra, qualifier, description
-                IndexEntry(dispname, 0, docname, anchor, docname, "", typ),
+                IndexEntry(
+                    option.path,
+                    0,
+                    option.docname,
+                    option.anchor,
+                    option.docname,
+                    "",
+                    option.typ,
+                ),
             )
 
         # convert the dict to the sorted list of tuples expected

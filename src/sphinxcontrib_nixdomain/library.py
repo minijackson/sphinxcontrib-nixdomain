@@ -117,20 +117,28 @@ class LibraryIndex(Index):
 
         # sort the list of recipes in alphabetical order
         bindings = list(nix.get_bindings())
-        bindings = sorted(bindings, key=lambda binding: binding[0])
+        bindings = sorted(bindings)
 
         # generate the expected output, shown below, from the above using the
         # first letter of the recipe as a key to group thing
         #
         # TODO: use the attribute path as key?
-        for _name, dispname, typ, docname, anchor, _priority in bindings:
-            entries = content.setdefault(dispname[0].lower(), [])
+        for binding in bindings:
+            entries = content.setdefault(binding.path[0].lower(), [])
             # No need to handle nesting,
             # Sphinx currently support only one level of nesting,
             # which would be weird with Nix module options
             entries.append(
                 # name, subtype, docname, anchor, extra, qualifier, description
-                IndexEntry(dispname, 0, docname, anchor, docname, "", typ),
+                IndexEntry(
+                    binding.path,
+                    0,
+                    binding.docname,
+                    binding.anchor,
+                    binding.docname,
+                    "",
+                    binding.typ,
+                ),
             )
 
         # convert the dict to the sorted list of tuples expected

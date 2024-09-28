@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import json
 from dataclasses import dataclass
 from functools import cached_property
@@ -12,6 +13,7 @@ from sphinx.util import logging
 from sphinx.util.nodes import make_refnode
 
 from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
+from ._utils import EntityType
 from .library import FunctionDirective, LibraryIndex
 from .module import OptionDirective, OptionsIndex
 
@@ -50,6 +52,40 @@ class AutoOptionDoc:
 
 
 AutoOptionsDoc = dict[str, AutoOptionDoc]
+
+
+@dataclass
+class RefEntity:
+    """A referenceable Nix entity.
+
+    This can be for example a binding (function, package) or an option.
+
+    This dataclass is used to figure out the entity's info
+    when a reference is resolved.
+    """
+
+    name: str
+    path: str
+    typ: EntityType
+    docname: str
+    anchor: str
+    priority: int
+
+    def to_tuple(self) -> tuple[str, str, str, str, str, int]:
+        """Get this entity as tuple, as needed by Sphinx."""
+        # name, dispname, type, docname, anchor, priority
+        return (
+            self.name,
+            self.path,
+            self.typ,
+            self.docname,
+            self.anchor,
+            self.priority,
+        )
+
+    def __lt__(self, other: RefEntity) -> bool:
+        return self.path < other.path
+
 
 class NixDomain(Domain):
     name = "nix"
@@ -93,18 +129,25 @@ class NixDomain(Domain):
 
         return result
 
-    def get_bindings(self) -> Generator[object_data]:
+    def get_bindings(self) -> Generator[RefEntity]:
         """Get all bindings in this domain."""
         yield from self.data["bindings"]
 
-    def get_options(self) -> Generator[object_data]:
+    def get_options(self) -> Generator[RefEntity]:
         """Get all options in this domain."""
         yield from self.data["options"]
 
-    def get_objects(self) -> Generator[object_data]:
-        """Get all objects in this domain."""
-        yield from self.get_bindings()
-        yield from self.get_options()
+    def get_entities(self) -> Generator[RefEntity]:
+        """Get all entities in this domain."""
+        yield from self.data["options"]
+
+    def get_objects(self) -> Generator[RefEntity]:
+        """Get all entities in this domain.
+
+        Returns a tuple, as needed by Sphinx.
+        """
+        for entity in itertools.chain(self.get_options(), self.get_bindings()):
+            yield entity.to_tuple()
 
     def resolve_xref(
         self,
@@ -123,21 +166,23 @@ class NixDomain(Domain):
         elif typ == "option":
             object_getter = self.get_options
         elif typ == "ref":
-            object_getter = self.get_objects
+            object_getter = self.get_entities
         else:
             logger.warning("Unknown Nix object type: %s", typ)
             return None
 
-        match = [
-            (docname, anchor)
-            for name, sig, typ, docname, anchor, prio in object_getter()
-            if sig == target
-        ]
+        match = [entity for entity in object_getter() if entity.path == target]
 
         if len(match) > 0:
-            todocname = match[0][0]
-            targ = match[0][1]
-            return make_refnode(builder, fromdocname, todocname, targ, contnode, targ)
+            entity = match[0]
+            return make_refnode(
+                builder,
+                fromdocname,
+                entity.docname,
+                entity.anchor,
+                contnode,
+                f"{entity.typ} {entity.path}",
+            )
 
         logger.warning(
             "No reference found for Nix object type: %s, with target: %s",
@@ -153,15 +198,14 @@ class NixDomain(Domain):
         anchor = f"nix-function-{path}"
 
         self.data["bindings"].append(
-            (name, path, typ, self.env.docname, anchor, 0),
+            RefEntity(name, path, typ, self.env.docname, anchor, 0)
         )
 
-    def add_option(self, signature: str, _options: dict[str, str]) -> None:
+    def add_option(self, path: str, _options: dict[str, str]) -> None:
         """Add a new module option to the domain."""
-        name = f"nix.option.{signature}"
-        anchor = f"nix-option-{signature}"
+        name = f"nix.option.{path}"
+        anchor = f"nix-option-{path}"
 
-        # name, dispname, type, docname, anchor, priority
         self.data["options"].append(
-            (name, signature, "Nix option", self.env.docname, anchor, 0),
+            RefEntity(name, path, EntityType.OPTION, self.env.docname, anchor, 0),
         )
