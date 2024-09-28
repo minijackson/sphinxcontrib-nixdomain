@@ -13,7 +13,7 @@ from sphinx.util import logging
 from sphinx.util.nodes import make_refnode
 
 from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
-from ._utils import EntityType
+from ._utils import EntityType, option_lt
 from .library import FunctionDirective, LibraryIndex
 from .module import OptionDirective, OptionsIndex
 
@@ -84,6 +84,10 @@ class RefEntity:
         )
 
     def __lt__(self, other: RefEntity) -> bool:
+        if self.typ == EntityType.OPTION:
+            # Sort .enable options first
+            return option_lt(self.path, other.path)
+
         return self.path < other.path
 
 

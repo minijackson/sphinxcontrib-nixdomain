@@ -10,6 +10,7 @@ from sphinx.directives import code
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
 
+from ._utils import option_key_fun
 from .module import OptionDirective
 
 if TYPE_CHECKING:
@@ -123,7 +124,7 @@ class NixAutoModuleDirective(SphinxDirective):
 
         result = []
 
-        for option in options:
+        for option in sorted(options, key=option_key_fun):
             result += NixAutoOptionDirective(
                 "",
                 arguments=[option],
