@@ -10,7 +10,7 @@ from sphinx import addnodes
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Index, IndexEntry
 
-from ._utils import EntityType
+from ._utils import EntityType, split_attr_path
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -38,6 +38,7 @@ class FunctionDirective(ObjectDescription):
         # TODO: attribute path to the function
         signode["fullname"] = fullname = sig
 
+        signode["path-parts"] = split_attr_path(sig)
         # parent_opts = self.env.ref_context.setdefault("nix:option", [])
         # signode["fullname"] = ".".join(parent_opts + [sig])
 
@@ -85,7 +86,7 @@ class FunctionDirective(ObjectDescription):
     #         self.env.ref_context.pop("nix:option")
 
     def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
-        return tuple(signode["fullname"].split("."))
+        return tuple(signode["path-parts"])
 
     def _toc_entry_name(self, signode: desc_signature) -> str:
         if not signode.get("_toc_parts"):

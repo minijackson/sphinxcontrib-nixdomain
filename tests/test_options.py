@@ -1,4 +1,4 @@
-from sphinxcontrib_nixdomain._utils import option_key_fun, option_lt
+from sphinxcontrib_nixdomain._utils import option_key_fun, option_lt, split_attr_path
 
 # ruff: noqa: D100, D103, S101
 
@@ -34,4 +34,23 @@ def test_options_sorting_key_fun() -> None:
         "b.a.c.enable",
         "b.a.c.d",
         "b.b.a",
+    ]
+
+
+def test_options_path_split() -> None:
+    assert split_attr_path('services.javaThingy.settings."com.package/config"') == [
+        "services",
+        "javaThingy",
+        "settings",
+        '"com.package/config"',
+    ]
+
+    assert split_attr_path('a.b."hello".b."bla\\"bla"."".enable') == [
+        "a",
+        "b",
+        '"hello"',
+        "b",
+        '"bla\\"bla"',
+        '""',
+        "enable",
     ]

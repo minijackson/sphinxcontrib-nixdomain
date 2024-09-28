@@ -10,6 +10,8 @@ from sphinx import addnodes
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Index, IndexEntry
 
+from ._utils import split_attr_path
+
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
@@ -17,8 +19,6 @@ if TYPE_CHECKING:
     from sphinx.directives import ObjDescT
 
     from . import NixDomain
-
-# TODO: make a class for Module / ModuleOption
 
 
 class OptionDirective(ObjectDescription):
@@ -41,7 +41,8 @@ class OptionDirective(ObjectDescription):
         parent_opts = self.env.ref_context.setdefault("nix:option", [])
         signode["fullname"] = fullname = ".".join([*parent_opts, sig])
 
-        sig_names = sig.split(".")
+        signode["path-parts"] = sig_names = split_attr_path(sig)
+        signode["name"] = sig_names[-1]
 
         if not noindex:
             signode += addnodes.index(
@@ -105,7 +106,7 @@ class OptionDirective(ObjectDescription):
             self.env.ref_context.pop("nix:option")
 
     def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
-        return tuple(signode["fullname"].split("."))
+        return tuple(signode["path-parts"])
 
     def _toc_entry_name(self, signode: desc_signature) -> str:
         if not signode.get("_toc_parts"):

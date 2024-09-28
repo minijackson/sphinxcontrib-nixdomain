@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import re
 from enum import StrEnum
 
 
@@ -19,3 +22,12 @@ def option_key_fun(path: str) -> str:
 def option_lt(left: str, right: str) -> bool:
     """Compare two options signature, sorting ".enable" first."""
     return sorted([left, right], key=option_key_fun)[0] == left
+
+
+IDENTIFIER = r"(?:[a-zA-Z_][a-zA-Z0-9_'-]*)"
+STR = r'(?:"(?:[^"\\]|\\.)*")'
+ATTRIBUTE = re.compile(f"{STR}|{IDENTIFIER}", re.ASCII)
+
+
+def split_attr_path(path: str) -> list[str]:
+    return re.findall(ATTRIBUTE, path)
