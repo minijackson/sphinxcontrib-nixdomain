@@ -27,13 +27,15 @@ class FunctionDirective(ObjectDescription):
     has_content = True
     required_arguments = 1
     option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
-        "noindex": directives.flag,
+        "no-index": directives.flag,
+        "no-index-entry": directives.flag,
+        "no-contents-entry": directives.flag,
         "type": directives.unchanged,
     }
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the function given its signature."""
-        signode["noindex"] = noindex = "noindex" in self.options
+        no_index = "no-index" in self.options or "no-index-entry" in self.options
 
         # TODO: attribute path to the function
         signode["fullname"] = fullname = sig
@@ -45,7 +47,7 @@ class FunctionDirective(ObjectDescription):
         # TODO: arguments
         # TODO: return type
 
-        if not noindex:
+        if not no_index:
             signode += addnodes.index(
                 entries=[
                     (

@@ -30,14 +30,16 @@ class OptionDirective(ObjectDescription):
     has_content = True
     required_arguments = 1
     option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
-        "noindex": directives.flag,
+        "no-index": directives.flag,
+        "no-index-entry": directives.flag,
+        "no-contents-entry": directives.flag,
         "type": directives.unchanged,
         "read-only": directives.flag,
     }
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the option given its signature."""
-        signode["noindex"] = noindex = "noindex" in self.options
+        no_index = "no-index" in self.options or "no-index-entry" in self.options
 
         parent_opts = self.env.ref_context.setdefault("nix:option", [])
         signode["fullname"] = fullname = ".".join([*parent_opts, sig])
@@ -45,7 +47,7 @@ class OptionDirective(ObjectDescription):
         signode["path-parts"] = sig_names = split_attr_path(sig)
         signode["name"] = sig_names[-1]
 
-        if not noindex:
+        if not no_index:
             signode += addnodes.index(
                 entries=[
                     (

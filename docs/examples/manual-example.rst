@@ -90,7 +90,7 @@ Service Bar
 
 .. nix:option:: services.bar
    :type: submodule
-   :noindex:
+   :no-index-entry:
 
    .. nix:option:: enable
 
