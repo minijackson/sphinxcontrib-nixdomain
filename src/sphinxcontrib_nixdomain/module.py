@@ -38,7 +38,7 @@ class ModuleOptionDirective(ObjectDescription):
         """Print the module option given its signature."""
         signode["noindex"] = noindex = "noindex" in self.options
 
-        parent_opts = self.env.ref_context.setdefault("nix:module-opt", [])
+        parent_opts = self.env.ref_context.setdefault("nix:option", [])
         signode["fullname"] = fullname = ".".join([*parent_opts, sig])
 
         sig_names = sig.split(".")
@@ -89,7 +89,7 @@ class ModuleOptionDirective(ObjectDescription):
         In this instance, we insert ourself in the context
         so that our children can see us as parent.
         """
-        module_opts = self.env.ref_context.setdefault("nix:module-opt", [])
+        module_opts = self.env.ref_context.setdefault("nix:option", [])
         module_opts.append(self.names[-1])
 
     def after_content(self) -> None:
@@ -98,11 +98,11 @@ class ModuleOptionDirective(ObjectDescription):
         In this instance, we remove ourself in the context
         to prevent other options to see us as parent.
         """
-        module_opts = self.env.ref_context.setdefault("nix:module-opt", [])
+        module_opts = self.env.ref_context.setdefault("nix:option", [])
         if module_opts:
             module_opts.pop()
         else:
-            self.env.ref_context.pop("nix:module-opt")
+            self.env.ref_context.pop("nix:option")
 
     def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
         return tuple(signode["fullname"].split("."))
@@ -116,15 +116,15 @@ class ModuleOptionDirective(ObjectDescription):
 
 def _module_option_target(fullname: str) -> str:
     """Return a target for referencing a module option."""
-    return f"nix-module-opt-{fullname}"
+    return f"nix-option-{fullname}"
 
 
 class ModuleOptionIndex(Index):
     """Index over module options."""
 
-    name = "modoptindex"
+    name = "optionsindex"
     localname = "Nix Module Option Index"
-    shortname = "module-opt"
+    shortname = "option"
 
     def generate(
         self,

@@ -28,6 +28,6 @@ Indices and tables
 ------------------
 
 * :ref:`genindex`
-* :ref:`nix-modoptindex`
+* :ref:`nix-optionsindex`
 * :ref:`nix-libindex`
 * :ref:`search`

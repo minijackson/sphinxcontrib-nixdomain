@@ -56,7 +56,7 @@ class NixAutoOptionDirective(SphinxDirective):
             directive_options["type"] = option.typ
 
         rendered = ModuleOptionDirective(
-            "nix:module-opt",
+            "nix:option",
             arguments=[name],
             options=directive_options,
             content=description,

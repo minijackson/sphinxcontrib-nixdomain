@@ -25,18 +25,18 @@ NixOS-like module options
    Example of ref links:
 
    - :nix:ref:`services.foo.enable`
-   - :nix:modopt:`services.bar.enable`
+   - :nix:option:`services.bar.enable`
    - :nix:bind:`toString`
 
    And failing examples:
 
    - :nix:bind:`services.foo.enable`
-   - :nix:modopt:`toString`
+   - :nix:option:`toString`
 
 Service Foo
 ^^^^^^^^^^^
 
-.. nix:module-opt:: services.foo.enable
+.. nix:option:: services.foo.enable
 
    Enable the Foo service
 
@@ -51,7 +51,7 @@ Service Foo
       true
 
 
-.. nix:module-opt:: services.foo.settings
+.. nix:option:: services.foo.settings
    :type: submodule
 
    Settings for Foo
@@ -69,7 +69,7 @@ Service Foo
       }
 
 
-.. nix:module-opt:: services.foo.settings.baz
+.. nix:option:: services.foo.settings.baz
    :type: list of (string)
 
    List of config to handle
@@ -87,11 +87,11 @@ Service Foo
 Service Bar
 ^^^^^^^^^^^
 
-.. nix:module-opt:: services.bar
+.. nix:option:: services.bar
    :type: submodule
    :noindex:
 
-   .. nix:module-opt:: enable
+   .. nix:option:: enable
 
       Enable the Bar service
 
@@ -106,7 +106,7 @@ Service Bar
          true
 
 
-   .. nix:module-opt:: settings
+   .. nix:option:: settings
       :type: attribute set
 
       Settings for Bar
@@ -124,7 +124,7 @@ Service Bar
          }
 
 
-      .. nix:module-opt:: baz
+      .. nix:option:: baz
          :type: list of (string)
 
          List of config to handle

@@ -36,7 +36,7 @@ class FunctionDirective(ObjectDescription):
         # TODO: attribute path to the function
         signode["fullname"] = fullname = sig
 
-        # parent_opts = self.env.ref_context.setdefault("nix:module-opt", [])
+        # parent_opts = self.env.ref_context.setdefault("nix:option", [])
         # signode["fullname"] = ".".join(parent_opts + [sig])
 
         # TODO: arguments
@@ -69,18 +69,18 @@ class FunctionDirective(ObjectDescription):
         signode["ids"].append(_function_target(signode["fullname"]))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_binding(signode["fullname"], "Function", {})
+        nix.add_binding(signode["fullname"], "Nix function", {})
 
     # def before_content(self) -> None:
-    #     module_opts = self.env.ref_context.setdefault("nix:module-opt", [])
+    #     module_opts = self.env.ref_context.setdefault("nix:option", [])
     #     module_opts.append(self.names[-1])
     #
     # def after_content(self) -> None:
-    #     module_opts = self.env.ref_context.setdefault("nix:module-opt", [])
+    #     module_opts = self.env.ref_context.setdefault("nix:option", [])
     #     if module_opts:
     #         module_opts.pop()
     #     else:
-    #         self.env.ref_context.pop("nix:module-opt")
+    #         self.env.ref_context.pop("nix:option")
 
     def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
         return tuple(signode["fullname"].split("."))

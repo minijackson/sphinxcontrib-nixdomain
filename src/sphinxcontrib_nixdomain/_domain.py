@@ -58,14 +58,14 @@ class NixDomain(Domain):
         "bind": XRefRole(),
         # TODO:
         # "func": XRefRole(),
-        "modopt": XRefRole(),
+        "option": XRefRole(),
         "ref": XRefRole(),
     }
     directives = {  # noqa: RUF012
         "automodule": NixAutoModuleDirective,
         "autooption": NixAutoOptionDirective,
         "function": FunctionDirective,
-        "module-opt": ModuleOptionDirective,
+        "option": ModuleOptionDirective,
     }
     indices = [  # noqa: RUF012
         LibraryIndex,
@@ -73,7 +73,7 @@ class NixDomain(Domain):
     ]
     initial_data = {  # noqa: RUF012
         "bindings": [],
-        "module-opts": [],
+        "options": [],
     }
     data_version = 0
 
@@ -99,7 +99,7 @@ class NixDomain(Domain):
 
     def get_module_options(self) -> Generator[object_data]:
         """Get all module options in this domain."""
-        yield from self.data["module-opts"]
+        yield from self.data["options"]
 
     def get_objects(self) -> Generator[object_data]:
         """Get all objects in this domain."""
@@ -120,7 +120,7 @@ class NixDomain(Domain):
         object_getter = None
         if typ == "bind":
             object_getter = self.get_bindings
-        elif typ == "modopt":
+        elif typ == "option":
             object_getter = self.get_module_options
         elif typ == "ref":
             object_getter = self.get_objects
@@ -158,10 +158,10 @@ class NixDomain(Domain):
 
     def add_module_option(self, signature: str, _options: dict[str, str]) -> None:
         """Add a new module option to the domain."""
-        name = f"nix.module-opt.{signature}"
-        anchor = f"nix-module-opt-{signature}"
+        name = f"nix.option.{signature}"
+        anchor = f"nix-option-{signature}"
 
         # name, dispname, type, docname, anchor, priority
-        self.data["module-opts"].append(
-            (name, signature, "Module option", self.env.docname, anchor, 0),
+        self.data["options"].append(
+            (name, signature, "Nix option", self.env.docname, anchor, 0),
         )
