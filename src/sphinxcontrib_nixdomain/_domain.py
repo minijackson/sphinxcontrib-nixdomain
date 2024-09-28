@@ -13,7 +13,7 @@ from sphinx.util.nodes import make_refnode
 
 from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
 from .library import FunctionDirective, LibraryIndex
-from .module import ModuleOptionDirective, ModuleOptionIndex
+from .module import OptionDirective, OptionsIndex
 
 if TYPE_CHECKING:
     from docutils.nodes import Element
@@ -65,11 +65,11 @@ class NixDomain(Domain):
         "automodule": NixAutoModuleDirective,
         "autooption": NixAutoOptionDirective,
         "function": FunctionDirective,
-        "option": ModuleOptionDirective,
+        "option": OptionDirective,
     }
     indices = [  # noqa: RUF012
         LibraryIndex,
-        ModuleOptionIndex,
+        OptionsIndex,
     ]
     initial_data = {  # noqa: RUF012
         "bindings": [],
@@ -97,14 +97,14 @@ class NixDomain(Domain):
         """Get all bindings in this domain."""
         yield from self.data["bindings"]
 
-    def get_module_options(self) -> Generator[object_data]:
-        """Get all module options in this domain."""
+    def get_options(self) -> Generator[object_data]:
+        """Get all options in this domain."""
         yield from self.data["options"]
 
     def get_objects(self) -> Generator[object_data]:
         """Get all objects in this domain."""
         yield from self.get_bindings()
-        yield from self.get_module_options()
+        yield from self.get_options()
 
     def resolve_xref(
         self,
@@ -121,7 +121,7 @@ class NixDomain(Domain):
         if typ == "bind":
             object_getter = self.get_bindings
         elif typ == "option":
-            object_getter = self.get_module_options
+            object_getter = self.get_options
         elif typ == "ref":
             object_getter = self.get_objects
         else:
@@ -156,7 +156,7 @@ class NixDomain(Domain):
             (name, path, typ, self.env.docname, anchor, 0),
         )
 
-    def add_module_option(self, signature: str, _options: dict[str, str]) -> None:
+    def add_option(self, signature: str, _options: dict[str, str]) -> None:
         """Add a new module option to the domain."""
         name = f"nix.option.{signature}"
         anchor = f"nix-option-{signature}"

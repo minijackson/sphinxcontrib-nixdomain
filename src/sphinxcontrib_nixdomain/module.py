@@ -21,8 +21,8 @@ if TYPE_CHECKING:
 # TODO: make a class for Module / ModuleOption
 
 
-class ModuleOptionDirective(ObjectDescription):
-    """Describe a module option.
+class OptionDirective(ObjectDescription):
+    """Describe an option.
 
     Should be used for NixOS-like modules.
     """
@@ -35,7 +35,7 @@ class ModuleOptionDirective(ObjectDescription):
     }
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
-        """Print the module option given its signature."""
+        """Print the option given its signature."""
         signode["noindex"] = noindex = "noindex" in self.options
 
         parent_opts = self.env.ref_context.setdefault("nix:option", [])
@@ -49,7 +49,7 @@ class ModuleOptionDirective(ObjectDescription):
                     (
                         "single",
                         fullname,
-                        _module_option_target(signode["fullname"]),
+                        _option_target(signode["fullname"]),
                         "",
                         None,
                     ),
@@ -77,30 +77,30 @@ class ModuleOptionDirective(ObjectDescription):
         _sig: str,
         signode: desc_signature,
     ) -> None:
-        """Add the given module option to the index, and create a target."""
-        signode["ids"].append(_module_option_target(signode["fullname"]))
+        """Add the given option to the index, and create a target."""
+        signode["ids"].append(_option_target(signode["fullname"]))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_module_option(signode["fullname"], {})
+        nix.add_option(signode["fullname"], {})
 
     def before_content(self) -> None:
-        """Insert content before a module option.
+        """Insert content before a option.
 
         In this instance, we insert ourself in the context
         so that our children can see us as parent.
         """
-        module_opts = self.env.ref_context.setdefault("nix:option", [])
-        module_opts.append(self.names[-1])
+        options = self.env.ref_context.setdefault("nix:option", [])
+        options.append(self.names[-1])
 
     def after_content(self) -> None:
-        """Insert content after a module option.
+        """Insert content after a option.
 
         In this instance, we remove ourself in the context
         to prevent other options to see us as parent.
         """
-        module_opts = self.env.ref_context.setdefault("nix:option", [])
-        if module_opts:
-            module_opts.pop()
+        options = self.env.ref_context.setdefault("nix:option", [])
+        if options:
+            options.pop()
         else:
             self.env.ref_context.pop("nix:option")
 
@@ -114,16 +114,16 @@ class ModuleOptionDirective(ObjectDescription):
         return signode["fullname"]
 
 
-def _module_option_target(fullname: str) -> str:
-    """Return a target for referencing a module option."""
+def _option_target(fullname: str) -> str:
+    """Return a target for referencing a option."""
     return f"nix-option-{fullname}"
 
 
-class ModuleOptionIndex(Index):
-    """Index over module options."""
+class OptionsIndex(Index):
+    """Index over options."""
 
     name = "optionsindex"
-    localname = "Nix Module Option Index"
+    localname = "Nix options index"
     shortname = "option"
 
     def generate(
@@ -136,14 +136,14 @@ class ModuleOptionIndex(Index):
         nix = cast("NixDomain", self.domain)
 
         # sort the list of recipes in alphabetical order
-        module_opts = list(nix.get_module_options())
-        module_opts = sorted(module_opts, key=lambda module_opt: module_opt[0])
+        options = list(nix.get_options())
+        options = sorted(options, key=lambda option: option.signature)
 
         # generate the expected output, shown below, from the above using the
         # first letter of the recipe as a key to group thing
         #
         # TODO: use the "top" module as key?
-        for _name, dispname, typ, docname, anchor, _priority in module_opts:
+        for _name, dispname, typ, docname, anchor, _priority in options:
             entries = content.setdefault(dispname[0].lower(), [])
             # No need to handle nesting,
             # Sphinx currently support only one level of nesting,

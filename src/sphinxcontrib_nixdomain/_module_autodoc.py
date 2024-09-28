@@ -10,7 +10,7 @@ from sphinx.directives import code
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
 
-from .module import ModuleOptionDirective
+from .module import OptionDirective
 
 if TYPE_CHECKING:
     from ._domain import AutoOptionDoc, NixDomain
@@ -55,7 +55,7 @@ class NixAutoOptionDirective(SphinxDirective):
         if option.typ is not None:
             directive_options["type"] = option.typ
 
-        rendered = ModuleOptionDirective(
+        rendered = OptionDirective(
             "nix:option",
             arguments=[name],
             options=directive_options,
