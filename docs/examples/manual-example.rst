@@ -30,8 +30,8 @@ NixOS-like module options
 
    And failing examples:
 
-   - :nix:bind:`services.foo.enable`
-   - :nix:option:`toString`
+   - :nix:option:`services.nonexistent.enable`
+   - :nix:bind:`missingFunction`
 
 Service Foo
 ^^^^^^^^^^^
