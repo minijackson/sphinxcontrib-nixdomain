@@ -136,6 +136,4 @@ class NixAutoModuleDirective(SphinxDirective):
                 state_machine=self.state_machine,
             ).run()
 
-        print(result)
-
         return result
