@@ -31,7 +31,10 @@
 
           arg = project.renderers.withPackages {
             inherit python;
-            extras = [ "docs" ];
+            extras = [
+              "docs"
+              "tests"
+            ];
           };
           pythonEnv = python.withPackages arg;
         in
@@ -78,10 +81,13 @@
                 };
               in
               (python.pkgs.buildPythonPackage attrs).overrideAttrs (old: {
-                nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ python.pkgs.sphinxHook ];
+                nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+                  python.pkgs.sphinxHook
+                  python.pkgs.pytestCheckHook
+                ];
 
                 preBuild = ''
-                  cp ${self.packages.x86_64-linux.exampleOptionsJson} options.json
+                  cp -v ${self.packages.x86_64-linux.exampleOptionsJson} options.json
                 '';
               });
           })
