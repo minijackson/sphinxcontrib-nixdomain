@@ -71,6 +71,7 @@ Service Foo
 
 .. nix:option:: services.foo.settings.baz
    :type: list of (string)
+   :read-only:
 
    List of config to handle
 

@@ -56,6 +56,9 @@ class NixAutoOptionDirective(SphinxDirective):
         if option.typ is not None:
             directive_options["type"] = option.typ
 
+        if option.read_only:
+            directive_options["read-only"] = True
+
         rendered = OptionDirective(
             "nix:option",
             arguments=[name],

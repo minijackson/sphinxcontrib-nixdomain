@@ -32,6 +32,7 @@ class OptionDirective(ObjectDescription):
     option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
         "noindex": directives.flag,
         "type": directives.unchanged,
+        "read-only": directives.flag,
     }
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
@@ -67,8 +68,23 @@ class OptionDirective(ObjectDescription):
 
         signode["type"] = ftype
 
+        signode["read-only"] = read_only = "read-only" in self.options
+
         if ftype:
-            signode += addnodes.desc_type(text=f" {ftype}")
+            signode += addnodes.desc_annotation(
+                ftype,
+                "",
+                addnodes.desc_sig_space(),
+                addnodes.desc_type(text=ftype),
+            )
+
+        if read_only:
+            signode += addnodes.desc_annotation(
+                "[read-only]",
+                "",
+                addnodes.desc_sig_space(),
+                addnodes.desc_sig_keyword(text="[read-only]"),
+            )
 
         return sig
 
