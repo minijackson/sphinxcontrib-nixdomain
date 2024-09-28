@@ -23,6 +23,7 @@ extensions = [
     "sphinxcontrib_nixdomain",
     "sphinx.ext.githubpages",
     "sphinx.ext.intersphinx",
+    "myst_parser",
 ]
 
 templates_path = ["_templates"]

@@ -1,7 +1,9 @@
-Autodoc examples
-================
+RST Autodoc examples
+====================
 
 .. TODO: explain more, present functions used
+
+.. default-domain:: nix
 
 NixOS-like module options
 -------------------------
@@ -9,9 +11,9 @@ NixOS-like module options
 Using ``autooption``
 ~~~~~~~~~~~~~~~~~~~~
 
-.. nix:autooption:: services.autobar.package
+.. autooption:: services.autofoo.settings
 
 Using ``automodule``
 ~~~~~~~~~~~~~~~~~~~~
 
-.. nix:automodule:: services.autofoo
+.. automodule:: services.autofoo

@@ -32,7 +32,7 @@ classifiers = [
 dependencies = ["sphinx>=7.0.0"]
 
 [project.optional-dependencies]
-docs = ["furo"]
+docs = ["furo", "myst-parser"]
 
 [project.urls]
 Documentation = "https://github.com/minijackson/sphinxcontrib-nixdomain#readme"
