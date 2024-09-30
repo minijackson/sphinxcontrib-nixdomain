@@ -18,14 +18,18 @@
         freeformType = (pkgs.formats.toml { }).type;
 
         options = {
-          baz = lib.mkOption {
-            description = "How to configure ``baz``";
+          bar.bar.baz = lib.mkOption {
+            description = "How to configure bar's ``baz``";
             default = [ ];
             example = [
               "hello"
               "world"
             ];
             type = with lib.types; listOf str;
+          };
+
+          "com.package/config" = lib.mkOption {
+            readOnly = true;
           };
         };
       };
