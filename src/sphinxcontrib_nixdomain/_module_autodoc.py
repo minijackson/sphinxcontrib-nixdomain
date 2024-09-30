@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
 
 from docutils import nodes
+from docutils.parsers.rst import directives
 from docutils.statemachine import StringList, string2lines
 from sphinx.directives import code
 from sphinx.util import logging
@@ -14,6 +15,8 @@ from ._utils import option_key_fun, skipped_options_levels, split_attr_path
 from .module import OptionDirective
 
 if TYPE_CHECKING:
+    from typing import Any
+
     from ._domain import AutoOptionDoc, NixDomain
 
 
@@ -25,11 +28,16 @@ logger = logging.getLogger(__name__)
 class NixAutoOptionDirective(SphinxDirective):
     has_content = False
     required_arguments = 1
+    option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
+        "short-toc-name": directives.flag,
+    }
 
     def run(self) -> list[nodes.Node]:
         nix = cast("NixDomain", self.env.get_domain("nix"))
 
         name = self.arguments[0]
+
+        short_toc_name = "short-toc-name" in self.options
 
         if name not in nix.auto_options_doc:
             logger.warning(
@@ -52,12 +60,15 @@ class NixAutoOptionDirective(SphinxDirective):
                 source="<NixOS-like option>",
             )
 
-        directive_options = {}
+        directive_options: dict[str, Any] = {}
         if option.typ is not None:
             directive_options["type"] = option.typ
 
         if option.read_only:
             directive_options["read-only"] = True
+
+        if short_toc_name:
+            directive_options["short-toc-name"] = True
 
         rendered = OptionDirective(
             "nix:option",
@@ -126,6 +137,10 @@ class NixAutoModuleDirective(SphinxDirective):
             logger.warning("No options found for module: '%s'", module)
             return []
 
+        short_toc_name = (
+            {"short-toc-name": True} if self.config.nix_toc_display_full_path else {}
+        )
+
         result = []
 
         result += OptionDirective(
@@ -152,7 +167,7 @@ class NixAutoModuleDirective(SphinxDirective):
                 result += OptionDirective(
                     "nix:option",
                     arguments=[in_between_option],
-                    options={},
+                    options=short_toc_name,
                     content=StringList(),
                     lineno=self.lineno,
                     content_offset=self.content_offset,
@@ -164,7 +179,7 @@ class NixAutoModuleDirective(SphinxDirective):
             result += NixAutoOptionDirective(
                 "",
                 arguments=[option],
-                options={},
+                options=short_toc_name,
                 content=StringList(),
                 lineno=self.lineno,
                 content_offset=self.content_offset,

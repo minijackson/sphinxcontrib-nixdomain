@@ -35,6 +35,7 @@ class OptionDirective(ObjectDescription):
         "no-contents-entry": directives.flag,
         "type": directives.unchanged,
         "read-only": directives.flag,
+        "short-toc-name": directives.flag,
     }
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
@@ -88,6 +89,8 @@ class OptionDirective(ObjectDescription):
                 addnodes.desc_sig_keyword(text="[read-only]"),
             )
 
+        signode["short-toc-name"] = "short-toc-name" in self.options
+
         return sig
 
     def add_target_and_index(
@@ -132,6 +135,9 @@ class OptionDirective(ObjectDescription):
     def _toc_entry_name(self, signode: desc_signature) -> str:
         if not signode.get("_toc_parts"):
             return ""
+
+        if signode["short-toc-name"]:
+            return signode["name"]
 
         return signode["fullname"]
 

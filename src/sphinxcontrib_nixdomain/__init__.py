@@ -25,6 +25,7 @@ def setup(app: Sphinx) -> ExtensionMetadata:
     """Set up the Nix Sphinx domain."""
     app.add_domain(NixDomain)
     app.add_config_value("nix_options_json_files", [], "html", list[str])
+    app.add_config_value("nix_toc_display_full_path", True, "html", bool)  # noqa: FBT003
 
     return {
         "version": "0.1.0",
