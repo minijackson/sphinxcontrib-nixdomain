@@ -10,7 +10,7 @@ from sphinx.directives import code
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
 
-from ._utils import option_key_fun
+from ._utils import option_key_fun, skipped_options_levels, split_attr_path
 from .module import OptionDirective
 
 if TYPE_CHECKING:
@@ -111,8 +111,7 @@ class NixAutoModuleDirective(SphinxDirective):
         nix = cast("NixDomain", self.env.get_domain("nix"))
 
         module = self.arguments[0]
-        # TODO: don't split where quoted
-        module_loc = module.split(".")
+        module_loc = split_attr_path(module)
 
         def _is_part_of_module(option: AutoOptionDoc) -> bool:
             return option.loc[: len(module_loc)] == module_loc
@@ -129,7 +128,39 @@ class NixAutoModuleDirective(SphinxDirective):
 
         result = []
 
+        result += OptionDirective(
+            "nix:option",
+            arguments=[module],
+            options={},
+            content=StringList(),
+            lineno=self.lineno,
+            content_offset=self.content_offset,
+            block_text=self.block_text,
+            state=self.state,
+            state_machine=self.state_machine,
+        ).run()
+
+        previous_option_loc = module_loc
+
         for option in sorted(options, key=option_key_fun):
+            option_loc = split_attr_path(option)
+
+            for in_between_option in skipped_options_levels(
+                previous_option_loc,
+                option_loc,
+            ):
+                result += OptionDirective(
+                    "nix:option",
+                    arguments=[in_between_option],
+                    options={},
+                    content=StringList(),
+                    lineno=self.lineno,
+                    content_offset=self.content_offset,
+                    block_text=self.block_text,
+                    state=self.state,
+                    state_machine=self.state_machine,
+                ).run()
+
             result += NixAutoOptionDirective(
                 "",
                 arguments=[option],
@@ -141,5 +172,7 @@ class NixAutoModuleDirective(SphinxDirective):
                 state=self.state,
                 state_machine=self.state_machine,
             ).run()
+
+            previous_option_loc = option_loc
 
         return result
