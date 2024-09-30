@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
 
+from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
@@ -33,8 +34,10 @@ class OptionDirective(ObjectDescription):
         "no-index": directives.flag,
         "no-index-entry": directives.flag,
         "no-contents-entry": directives.flag,
+        "no-typesetting": directives.flag,
         "type": directives.unchanged,
         "read-only": directives.flag,
+        "declaration": directives.unchanged,
         "short-toc-name": directives.flag,
     }
 
@@ -88,6 +91,23 @@ class OptionDirective(ObjectDescription):
                 addnodes.desc_sig_space(),
                 addnodes.desc_sig_keyword(text="[read-only]"),
             )
+
+        declaration = self.options.get("declaration")
+
+        if declaration and self.config.nix_linkcode_resolve is not None:
+            uri = self.config.nix_linkcode_resolve(declaration)
+
+            # Mostly taken from the 'linkcode' builtin extension
+            onlynode = addnodes.only(expr="html")
+            onlynode += nodes.reference(
+                "",
+                "",
+                nodes.inline("", "[source]", classes=["viewcode-link"]),
+                internal=False,
+                refuri=uri,
+            )
+            signode += onlynode
+
 
         signode["short-toc-name"] = "short-toc-name" in self.options
 

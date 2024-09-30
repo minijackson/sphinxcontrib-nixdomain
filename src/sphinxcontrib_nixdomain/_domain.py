@@ -31,8 +31,6 @@ logger = logging.getLogger(__name__)
 # - show_prefix: if options are displayed nested,
 #   choose whether the option prefix is repeated
 
-# TODO: add links to the source
-
 object_data = tuple[str, str, str, str, str, int]
 
 

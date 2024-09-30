@@ -43,6 +43,8 @@
             pythonEnv
             pkgs.hatch
           ];
+
+          env.REVISION = self.rev or "main";
         };
 
       lib = import ./lib { inherit (nixpkgs) lib; };
@@ -89,6 +91,8 @@
                 preBuild = ''
                   cp -v ${self.packages.x86_64-linux.exampleOptionsJson} options.json
                 '';
+
+                env.REVISION = self.rev or "main";
               });
           })
         ];

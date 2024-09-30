@@ -11,13 +11,6 @@ if TYPE_CHECKING:
     from sphinx.util.typing import ExtensionMetadata
 
 
-# TODO: add options to the future autodoc:
-# - flat: choose whether the options are displayed flat or nested
-# - show_prefix: if options are displayed nested,
-#   choose whether the option prefix is repeated
-
-# TODO: add links to the source
-
 object_data = tuple[str, str, str, str, str, int]
 
 
@@ -25,6 +18,8 @@ def setup(app: Sphinx) -> ExtensionMetadata:
     """Set up the Nix Sphinx domain."""
     app.add_domain(NixDomain)
     app.add_config_value("nix_options_json_files", [], "html", list[str])
+    # Not "html" here, because we'd get a warning about the function being unpickable
+    app.add_config_value("nix_linkcode_resolve", None, "")
     app.add_config_value("nix_toc_display_full_path", True, "html", bool)  # noqa: FBT003
 
     return {

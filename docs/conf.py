@@ -5,6 +5,7 @@
 
 import os
 import sys
+from pathlib import Path
 
 sys.path.append(os.path.abspath("../src"))  # noqa: PTH100
 
@@ -15,6 +16,8 @@ project = "sphinxcontrib-nixdomain"
 copyright = "2024, Minijackson"
 author = "Minijackson"
 release = "0.1.0"
+
+source_repository = "https://github.com/minijackson/sphinxcontrib-nixdomain"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -43,7 +46,7 @@ html_baseurl = "https://minijackson.github.io/sphinxcontrib-nixdomain/"
 
 html_theme = "furo"
 html_theme_options = {
-    "source_repository": "https://github.com/minijackson/sphinxcontrib-nixdomain",
+    "source_repository": source_repository,
     "source_branch": "main",
     "source_directory": "docs/",
     "footer_icons": [
@@ -62,4 +65,11 @@ html_theme_options = {
 
 # -- Options for the Nix domain ----------------------------------------------
 
+revision = os.environ.get("REVISION", "main")
+
 nix_options_json_files = ["./options.json"]
+
+def nix_linkcode_resolve(path: str) -> str:
+    # Strip the nix store and package
+    relative_path = "/".join(Path(path).parts[4:])
+    return f"{source_repository}/blob/{revision}/{relative_path}"

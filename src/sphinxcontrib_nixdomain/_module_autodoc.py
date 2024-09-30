@@ -70,6 +70,10 @@ class NixAutoOptionDirective(SphinxDirective):
         if short_toc_name:
             directive_options["short-toc-name"] = True
 
+        if option.declarations != []:
+            # Not sure how to handle multiple declarations
+            directive_options["declaration"] = option.declarations[0]
+
         rendered = OptionDirective(
             "nix:option",
             arguments=[name],
@@ -100,9 +104,9 @@ class NixAutoOptionDirective(SphinxDirective):
                 "Example",
             )
 
-        if option.declarations != []:
+        if option.declarations != [] and self.config.nix_linkcode_resolve is None:
             declaration_nodes: list[nodes.Element] = [
-                nodes.term("Declared in", "Declared in")
+                nodes.term("Declared in", "Declared in"),
             ]
             for decl in option.declarations:
                 decl_para = nodes.paragraph("", decl)
