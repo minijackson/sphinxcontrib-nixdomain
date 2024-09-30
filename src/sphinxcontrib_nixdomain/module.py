@@ -124,7 +124,10 @@ class OptionDirective(ObjectDescription):
             self.env.ref_context.pop("nix:option")
 
     def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
-        return tuple(signode["path-parts"])
+        prefix = []
+        for part in self.env.ref_context["nix:option"]:
+            prefix += split_attr_path(part)
+        return (*prefix, *signode["path-parts"])
 
     def _toc_entry_name(self, signode: desc_signature) -> str:
         if not signode.get("_toc_parts"):
