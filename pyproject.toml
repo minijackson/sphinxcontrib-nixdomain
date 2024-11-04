@@ -15,7 +15,6 @@ maintainers = [{ name = "Minijackson", email = "minijackson@riseup.net" }]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Framework :: Sphinx",
-  "Framework :: Sphinx :: Domain",
   "Framework :: Sphinx :: Extension",
   "License :: OSI Approved",
   "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
