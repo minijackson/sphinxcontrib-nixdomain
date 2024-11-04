@@ -2,6 +2,7 @@
   description = "Nix domain and autodoc for Sphinx";
 
   inputs = {
+    flake-compat.url = "github:edolstra/flake-compat";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     pyproject-nix = {
       url = "github:nix-community/pyproject.nix";
