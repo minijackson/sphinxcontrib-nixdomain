@@ -147,17 +147,18 @@ class NixAutoModuleDirective(SphinxDirective):
 
         result = []
 
-        result += OptionDirective(
-            "nix:option",
-            arguments=[module],
-            options={},
-            content=StringList(),
-            lineno=self.lineno,
-            content_offset=self.content_offset,
-            block_text=self.block_text,
-            state=self.state,
-            state_machine=self.state_machine,
-        ).run()
+        if module not in nix.auto_options_doc:
+            result += OptionDirective(
+                "nix:option",
+                arguments=[module],
+                options={},
+                content=StringList(),
+                lineno=self.lineno,
+                content_offset=self.content_offset,
+                block_text=self.block_text,
+                state=self.state,
+                state_machine=self.state_machine,
+            ).run()
 
         previous_option_loc = module_loc
 
@@ -183,7 +184,7 @@ class NixAutoModuleDirective(SphinxDirective):
             result += NixAutoOptionDirective(
                 "",
                 arguments=[option],
-                options=short_toc_name,
+                options=short_toc_name if option != module else {},
                 content=StringList(),
                 lineno=self.lineno,
                 content_offset=self.content_offset,
