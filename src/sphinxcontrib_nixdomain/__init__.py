@@ -20,7 +20,7 @@ def setup(app: Sphinx) -> ExtensionMetadata:
     app.add_config_value("nix_options_json_files", [], "html", list[str])
     # Not "html" here, because we'd get a warning about the function being unpickable
     app.add_config_value("nix_linkcode_resolve", None, "")
-    app.add_config_value("nix_toc_display_full_path", True, "html", bool)  # noqa: FBT003
+    app.add_config_value("nix_toc_display_full_path", False, "html", bool)  # noqa: FBT003
 
     return {
         "version": "0.1.0",

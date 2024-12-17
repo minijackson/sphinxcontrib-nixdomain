@@ -142,7 +142,9 @@ class NixAutoModuleDirective(SphinxDirective):
             return []
 
         short_toc_name = (
-            {"short-toc-name": True} if self.config.nix_toc_display_full_path else {}
+            {"short-toc-name": True}
+            if not self.config.nix_toc_display_full_path
+            else {}
         )
 
         result = []
