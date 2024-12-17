@@ -29,7 +29,7 @@ def option_lt(left: str, right: str) -> bool:
     return sorted([left, right], key=option_key_fun)[0] == left
 
 
-IDENTIFIER = r"(?:[a-zA-Z_][a-zA-Z0-9_'-]*)"
+IDENTIFIER = r"(?:<?[a-zA-Z_][a-zA-Z0-9_'-]*>?)"
 STR = r'(?:"(?:[^"\\]|\\.)*")'
 ATTRIBUTE = re.compile(f"{STR}|{IDENTIFIER}", re.ASCII)
 

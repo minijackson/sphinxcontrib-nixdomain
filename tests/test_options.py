@@ -38,9 +38,12 @@ def test_options_sorting_key_fun() -> None:
 
 
 def test_options_path_split() -> None:
-    assert split_attr_path('services.javaThingy.settings."com.package/config"') == [
+    assert split_attr_path(
+        'services.javaThingy.<name>.settings."com.package/config"',
+    ) == [
         "services",
         "javaThingy",
+        "<name>",
         "settings",
         '"com.package/config"',
     ]
