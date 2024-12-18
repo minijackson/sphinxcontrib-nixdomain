@@ -10,6 +10,10 @@
         Settings for the Foo service.
 
         .. versionadded:: nixos-24.05
+
+        .. seealso::
+
+           :option:`autobar`
       '';
 
       default = { };

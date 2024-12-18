@@ -13,7 +13,7 @@ from sphinx.util import logging
 from sphinx.util.nodes import make_refnode
 
 from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
-from ._utils import EntityType, option_lt
+from ._utils import EntityType, option_lt, split_attr_path
 from .library import FunctionDirective, LibraryIndex
 from .module import OptionDirective, OptionsIndex
 
@@ -89,15 +89,28 @@ class RefEntity:
         return self.path < other.path
 
 
+class NixXRefRole(XRefRole):
+    def process_link(
+        self,
+        env: BuildEnvironment,
+        refnode: Element,
+        has_explicit_title: bool,
+        title: str,
+        target: str,
+    ) -> tuple[str, str]:
+        refnode["nix:option"] = env.ref_context.get("nix:option", [""])[-1]
+        return super().process_link(env, refnode, has_explicit_title, title, target)
+
+
 class NixDomain(Domain):
     name = "nix"
     label = "Nix"
     roles = {  # noqa: RUF012
-        "bind": XRefRole(),
+        "bind": NixXRefRole(),
         # TODO:
         # "func": XRefRole(),
-        "option": XRefRole(),
-        "ref": XRefRole(),
+        "option": NixXRefRole(),
+        "ref": NixXRefRole(),
     }
     directives = {  # noqa: RUF012
         "automodule": NixAutoModuleDirective,
@@ -158,25 +171,41 @@ class NixDomain(Domain):
         builder: Builder,
         typ: str,
         target: str,
-        _node: pending_xref,
+        node: pending_xref,
         contnode: Element,
     ) -> Element | None:
         """Resolve the pending_xref node with the given typ and target."""
         object_getter = None
         if typ == "bind":
+            context_path = []
             object_getter = self.get_bindings
         elif typ == "option":
+            context_path = split_attr_path(node.get("nix:option", ""))
             object_getter = self.get_options
         elif typ == "ref":
+            context_path = []
             object_getter = self.get_entities
         else:
             logger.warning("Unknown Nix object type: %s", typ)
             return None
 
-        match = [entity for entity in object_getter() if entity.path == target]
+        target_path = split_attr_path(target)
 
-        if len(match) > 0:
-            entity = match[0]
+        # Make a list of possible referred attributes,
+        # depending on the context
+        candidates = [
+            ".".join(context_path[:prefix_len] + target_path)
+            for prefix_len in range(len(context_path) + 1)
+        ]
+        # Order candidates by most nested attribute first
+        candidates.reverse()
+
+        matches = [entity for entity in object_getter() if entity.path in candidates]
+        # Sort matches according to the candidates list
+        matches.sort(key=lambda entity: candidates.index(entity.path))
+
+        if len(matches) > 0:
+            entity = matches[0]
             return make_refnode(
                 builder,
                 fromdocname,
@@ -194,7 +223,9 @@ class NixDomain(Domain):
         )
         return None
 
-    def add_binding(self, path: str, typ: EntityType, _arguments: dict[str, str]) -> None:
+    def add_binding(
+        self, path: str, typ: EntityType, _arguments: dict[str, str]
+    ) -> None:
         """Add a new binding to the domain."""
         name = f"nix.function.{path}"
         anchor = f"nix-function-{path}"
