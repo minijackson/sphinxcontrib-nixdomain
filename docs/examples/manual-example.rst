@@ -16,6 +16,19 @@ Functions
       nix> toString 42
       "42"
 
+Packages
+--------
+
+.. nix:package:: python3Packages.bla
+
+   Hello this is a description.
+
+   :name: bla
+   :version: 0.0.0-rc1
+   :license: Bla
+   :maintainers: Myself
+   :override bool withEncryption: support encryption
+   :override list of strings features: features to enable
 
 NixOS-like module options
 -------------------------

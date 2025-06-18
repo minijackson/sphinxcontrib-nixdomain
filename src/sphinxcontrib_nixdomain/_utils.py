@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 class EntityType(StrEnum):
     OPTION = "Nix option"
     FUNCTION = "Nix function"
+    PACKAGE = "Nix package"
 
 
 def option_key_fun(path: str) -> str:

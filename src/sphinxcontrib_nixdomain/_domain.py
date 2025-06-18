@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import itertools
 import json
 from dataclasses import dataclass
 from functools import cached_property
@@ -16,6 +15,7 @@ from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
 from ._utils import EntityType, option_lt, split_attr_path
 from .library import FunctionDirective, LibraryIndex
 from .module import OptionDirective, OptionsIndex
+from .package import PackageDirective
 
 if TYPE_CHECKING:
     from docutils.nodes import Element
@@ -110,6 +110,7 @@ class NixDomain(Domain):
         # TODO:
         # "func": XRefRole(),
         "option": NixXRefRole(),
+        "pkg": NixXRefRole(),
         "ref": NixXRefRole(),
     }
     directives = {  # noqa: RUF012
@@ -117,6 +118,7 @@ class NixDomain(Domain):
         "autooption": NixAutoOptionDirective,
         "function": FunctionDirective,
         "option": OptionDirective,
+        "package": PackageDirective,
     }
     indices = [  # noqa: RUF012
         LibraryIndex,
@@ -125,6 +127,7 @@ class NixDomain(Domain):
     initial_data = {  # noqa: RUF012
         "bindings": [],
         "options": [],
+        "packages": [],
     }
     data_version = 0
 
@@ -152,16 +155,22 @@ class NixDomain(Domain):
         """Get all options in this domain."""
         yield from self.data["options"]
 
+    def get_packages(self) -> Generator[RefEntity]:
+        """Get all options in this domain."""
+        yield from self.data["packages"]
+
     def get_entities(self) -> Generator[RefEntity]:
         """Get all entities in this domain."""
-        yield from self.data["options"]
+        yield from self.get_options()
+        yield from self.get_packages()
+        yield from self.get_bindings()
 
     def get_objects(self) -> Generator[object_data]:
         """Get all entities in this domain.
 
         Returns a tuple, as needed by Sphinx.
         """
-        for entity in itertools.chain(self.get_options(), self.get_bindings()):
+        for entity in self.get_entities():
             yield entity.to_tuple()
 
     def resolve_xref(
@@ -182,6 +191,9 @@ class NixDomain(Domain):
         elif typ == "option":
             context_path = split_attr_path(node.get("nix:option", ""))
             object_getter = self.get_options
+        elif typ == "pkg":
+            context_path = split_attr_path(node.get("nix:package", ""))
+            object_getter = self.get_packages
         elif typ == "ref":
             context_path = []
             object_getter = self.get_entities
@@ -224,14 +236,17 @@ class NixDomain(Domain):
         return None
 
     def add_binding(
-        self, path: str, typ: EntityType, _arguments: dict[str, str]
+        self,
+        path: str,
+        typ: EntityType,
+        _arguments: dict[str, str],
     ) -> None:
         """Add a new binding to the domain."""
         name = f"nix.function.{path}"
         anchor = f"nix-function-{path}"
 
         self.data["bindings"].append(
-            RefEntity(name, path, typ, self.env.docname, anchor, 0)
+            RefEntity(name, path, typ, self.env.docname, anchor, 0),
         )
 
     def add_option(self, path: str, _options: dict[str, str]) -> None:
@@ -241,4 +256,13 @@ class NixDomain(Domain):
 
         self.data["options"].append(
             RefEntity(name, path, EntityType.OPTION, self.env.docname, anchor, 0),
+        )
+
+    def add_package(self, path: str, _options: dict[str, str]) -> None:
+        """Add a new module option to the domain."""
+        name = f"nix.package.{path}"
+        anchor = f"nix-package-{path}"
+
+        self.data["packages"].append(
+            RefEntity(name, path, EntityType.PACKAGE, self.env.docname, anchor, 0),
         )
