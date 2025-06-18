@@ -8,6 +8,7 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
+from sphinx.util.docfields import Field, TypedField
 
 from ._utils import split_attr_path
 
@@ -31,6 +32,15 @@ class PackageDirective(ObjectDescription):
         "short-toc-name": directives.flag,
         "declaration": directives.unchanged,
     }
+
+    doc_field_types: list[Field] = [
+        TypedField(
+            "override",
+            label="Overrides",
+            names=("override", "overrides"),
+            can_collapse=True,
+        ),
+    ]
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the option given its signature."""
