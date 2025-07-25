@@ -99,7 +99,6 @@ class PackageDirective(ObjectDescription):
         signode["ids"].append(_package_target(signode["fullname"]))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        print("Adding package: ", signode["fullname"])
         nix.add_package(signode["fullname"], {})
 
     def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
