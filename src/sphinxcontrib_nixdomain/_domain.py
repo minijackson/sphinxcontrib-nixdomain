@@ -77,7 +77,7 @@ class RefEntity:
         return (
             self.name,
             self.path,
-            self.typ,
+            self.typ.directive_name(),
             self.docname,
             self.anchor,
             self.priority,
@@ -244,27 +244,24 @@ class NixDomain(Domain):
         _arguments: dict[str, str],
     ) -> None:
         """Add a new binding to the domain."""
-        name = f"nix.function.{path}"
         anchor = f"nix-function-{path}"
 
         self.data["bindings"].append(
-            RefEntity(name, path, typ, self.env.docname, anchor, 0),
+            RefEntity(path, path, typ, self.env.docname, anchor, 0),
         )
 
     def add_option(self, path: str, _options: dict[str, str]) -> None:
         """Add a new module option to the domain."""
-        name = f"nix.option.{path}"
         anchor = f"nix-option-{path}"
 
         self.data["options"].append(
-            RefEntity(name, path, EntityType.OPTION, self.env.docname, anchor, 0),
+            RefEntity(path, path, EntityType.OPTION, self.env.docname, anchor, 0),
         )
 
     def add_package(self, path: str, _options: dict[str, str]) -> None:
         """Add a new module option to the domain."""
-        name = f"nix.package.{path}"
         anchor = f"nix-package-{path}"
 
         self.data["packages"].append(
-            RefEntity(name, path, EntityType.PACKAGE, self.env.docname, anchor, 0),
+            RefEntity(path, path, EntityType.PACKAGE, self.env.docname, anchor, 0),
         )

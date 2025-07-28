@@ -10,9 +10,21 @@ if TYPE_CHECKING:
 
 
 class EntityType(StrEnum):
-    OPTION = "Nix option"
-    FUNCTION = "Nix function"
-    PACKAGE = "Nix package"
+    OPTION = "option"
+    FUNCTION = "function"
+    PACKAGE = "package"
+
+    def directive_name(self) -> str:
+        return str(self)
+
+    def human_name(self) -> str:
+        match self:
+            case EntityType.OPTION:
+                return "Nix option"
+            case EntityType.FUNCTION:
+                return "Nix function"
+            case EntityType.PACKAGE:
+                return "Nix package"
 
 
 def option_key_fun(path: str) -> str:
