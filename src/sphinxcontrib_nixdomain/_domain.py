@@ -4,9 +4,9 @@ import json
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Generator
+from typing import TYPE_CHECKING, ClassVar
 
-from sphinx.domains import Domain
+from sphinx.domains import Domain, ObjType
 from sphinx.roles import XRefRole
 from sphinx.util import logging
 from sphinx.util.nodes import make_refnode
@@ -18,6 +18,8 @@ from .module import OptionDirective, OptionsIndex
 from .package import PackageDirective
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from docutils.nodes import Element
     from sphinx.addnodes import pending_xref
     from sphinx.builders import Builder

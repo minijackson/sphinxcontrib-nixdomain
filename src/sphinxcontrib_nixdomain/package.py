@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -13,6 +13,8 @@ from sphinx.util.docfields import Field, TypedField
 from ._utils import split_attr_path
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from sphinx.addnodes import desc_signature
     from sphinx.directives import ObjDescT
 

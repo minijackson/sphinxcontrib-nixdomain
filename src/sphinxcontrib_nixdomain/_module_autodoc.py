@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -15,6 +15,7 @@ from ._utils import option_key_fun, skipped_options_levels, split_attr_path
 from .module import OptionDirective
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from typing import Any
 
     from ._domain import AutoOptionDoc, NixDomain
