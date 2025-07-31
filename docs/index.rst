@@ -18,6 +18,13 @@ using the Sphinx documentation ecosystem.
 .. _Sphinx domain: https://www.sphinx-doc.org/en/master/usage/domains/index.html
 
 .. toctree::
+   :caption: Usage:
+
+   usage/configuration
+   usage/cross-references
+   usage/manual
+
+.. toctree::
    :caption: Examples:
    :maxdepth: 2
 
