@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING
 
 from sphinx.domains import Domain, ObjType
 from sphinx.roles import XRefRole
@@ -107,13 +107,19 @@ class NixXRefRole(XRefRole):
 class NixDomain(Domain):
     name = "nix"
     label = "Nix"
+
+    object_types: dict[str, ObjType] = {  # noqa: RUF012
+        "option": ObjType("option", "option", "obj"),
+        "function": ObjType("function", "func", "bind", "obj"),
+        "package": ObjType("package", "pkg", "bind", "obj"),
+    }
+
     roles = {  # noqa: RUF012
-        "bind": NixXRefRole(),
-        # TODO:
-        # "func": XRefRole(),
-        "option": NixXRefRole(),
-        "pkg": NixXRefRole(),
-        "ref": NixXRefRole(),
+        "bind": NixXRefRole(warn_dangling=True),
+        "func": NixXRefRole(warn_dangling=True),
+        "option": NixXRefRole(warn_dangling=True),
+        "pkg": NixXRefRole(warn_dangling=True),
+        "obj": NixXRefRole(warn_dangling=True),
     }
     directives = {  # noqa: RUF012
         "automodule": NixAutoModuleDirective,
@@ -186,21 +192,46 @@ class NixDomain(Domain):
         contnode: Element,
     ) -> Element | None:
         """Resolve the pending_xref node with the given typ and target."""
+        objtypes = self.objtypes_for_role(typ)
+
+        if not objtypes:
+            return None
+
+        for objtype in objtypes:
+            if res := self._resolve_single_type_xref(
+                fromdocname,
+                builder,
+                objtype,
+                target,
+                node,
+                contnode,
+            ):
+                return res
+
+        return None
+
+    def _resolve_single_type_xref(
+        self,
+        fromdocname: str,
+        builder: Builder,
+        objtype: str,
+        target: str,
+        node: pending_xref,
+        contnode: Element,
+    ) -> Element | None:
         object_getter = None
-        if typ == "bind":
+        if objtype == "function":
             context_path = []
+            # TODO: fix that, a function is not necessarily any binding
             object_getter = self.get_bindings
-        elif typ == "option":
+        elif objtype == "option":
             context_path = split_attr_path(node.get("nix:option", ""))
             object_getter = self.get_options
-        elif typ == "pkg":
+        elif objtype == "package":
             context_path = split_attr_path(node.get("nix:package", ""))
             object_getter = self.get_packages
-        elif typ == "ref":
-            context_path = []
-            object_getter = self.get_entities
         else:
-            logger.warning("Unknown Nix object type: %s", typ)
+            logger.warning("Unknown Nix object type: %s", objtype)
             return None
 
         target_path = split_attr_path(target)
@@ -229,12 +260,6 @@ class NixDomain(Domain):
                 f"{entity.typ} {entity.path}",
             )
 
-        logger.warning(
-            "No reference found for Nix object type: %s, with target: %s",
-            typ,
-            target,
-            location=fromdocname,
-        )
         return None
 
     def add_binding(

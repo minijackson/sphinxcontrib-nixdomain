@@ -37,7 +37,7 @@ NixOS-like module options
 
    Example of ref links:
 
-   - :nix:ref:`services.foo.enable`
+   - :nix:obj:`services.foo.enable`
    - :nix:option:`services.bar.enable`
    - :nix:bind:`toString`
 
@@ -45,6 +45,7 @@ NixOS-like module options
 
    - :nix:option:`services.nonexistent.enable`
    - :nix:bind:`missingFunction`
+   - :nix:obj:`missingObject`
 
 Service Foo
 ^^^^^^^^^^^
