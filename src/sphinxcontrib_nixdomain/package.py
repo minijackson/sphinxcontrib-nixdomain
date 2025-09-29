@@ -40,7 +40,6 @@ class PackageDirective(ObjectDescription):
             "override",
             label="Overrides",
             names=("override", "overrides"),
-            can_collapse=True,
         ),
     ]
 
