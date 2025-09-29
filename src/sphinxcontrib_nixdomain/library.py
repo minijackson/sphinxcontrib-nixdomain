@@ -30,13 +30,12 @@ class FunctionDirective(ObjectDescription):
         "no-index": directives.flag,
         "no-index-entry": directives.flag,
         "no-contents-entry": directives.flag,
+        "no-typesetting": directives.flag,
         "type": directives.unchanged,
     }
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the function given its signature."""
-        no_index = "no-index" in self.options or "no-index-entry" in self.options
-
         # TODO: attribute path to the function
         signode["fullname"] = fullname = sig
 
@@ -47,34 +46,32 @@ class FunctionDirective(ObjectDescription):
         # TODO: arguments
         # TODO: return type
 
-        if not no_index:
-            signode += addnodes.index(
-                entries=[
-                    (
-                        "single",
-                        fullname,
-                        _function_target(signode["fullname"]),
-                        "",
-                        None,
-                    ),
-                ],
-            )
-
         signode += addnodes.desc_name(text=sig)
 
-        return sig
+        return fullname
 
     def add_target_and_index(
         self,
-        _name_cls: ObjDescT,
+        fullname: str,
         _sig: str,
         signode: desc_signature,
     ) -> None:
         """Add the given function to the index, and create a target."""
-        signode["ids"].append(_function_target(signode["fullname"]))
+        signode["ids"].append(_function_target(fullname))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_binding(signode["fullname"], EntityType.FUNCTION, {})
+        nix.add_binding(fullname, EntityType.FUNCTION, {})
+
+        if "no-index-entry" not in self.options:
+            self.indexnode["entries"].append(
+                (
+                    "single",
+                    f"{fullname} (Nix function)",
+                    _function_target(fullname),
+                    "",
+                    None,
+                ),
+            )
 
     # def before_content(self) -> None:
     #     module_opts = self.env.ref_context.setdefault("nix:option", [])

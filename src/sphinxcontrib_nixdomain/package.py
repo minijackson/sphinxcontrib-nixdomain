@@ -46,24 +46,9 @@ class PackageDirective(ObjectDescription):
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the option given its signature."""
-        no_index = "no-index" in self.options or "no-index-entry" in self.options
-
         signode["fullname"] = fullname = sig
         signode["path-parts"] = sig_names = split_attr_path(sig)
         signode["name"] = sig_names[-1]
-
-        if not no_index:
-            signode += addnodes.index(
-                entries=[
-                    (
-                        "single",
-                        sig,
-                        _package_target(fullname),
-                        "",
-                        None,
-                    ),
-                ],
-            )
 
         for el in sig_names[:-1]:
             signode += addnodes.desc_addname(text=el)
@@ -89,19 +74,30 @@ class PackageDirective(ObjectDescription):
 
         signode["short-toc-name"] = "short-toc-name" in self.options
 
-        return sig
+        return fullname
 
     def add_target_and_index(
         self,
-        _name_cls: ObjDescT,
+        fullname: str,
         _sig: str,
         signode: desc_signature,
     ) -> None:
         """Add the given option to the index, and create a target."""
-        signode["ids"].append(_package_target(signode["fullname"]))
+        signode["ids"].append(_package_target(fullname))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_package(signode["fullname"], {})
+        nix.add_package(fullname, {})
+
+        if "no-index-entry" not in self.options:
+            self.indexnode["entries"].append(
+                (
+                    "single",
+                    f"{fullname} (Nix package)",
+                    _package_target(fullname),
+                    "",
+                    None,
+                ),
+            )
 
     def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
         return tuple(signode["path-parts"])
