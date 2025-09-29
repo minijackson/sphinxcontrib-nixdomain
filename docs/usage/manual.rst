@@ -45,7 +45,7 @@ or if you want to develop a custom documentation generator.
       :type: text
 
       A link to the source code.
-      See the :confval:`nix_linkcode_resolve` configuration
+      See the :confval:`nixdomain_linkcode_resolve` configuration
       to generate a ``[source]`` link.
 
    .. rst:directive:option:: short-toc-name
@@ -87,7 +87,7 @@ or if you want to develop a custom documentation generator.
       :type: text
 
       A link to the source code.
-      See the :confval:`nix_linkcode_resolve` configuration
+      See the :confval:`nixdomain_linkcode_resolve` configuration
       to generate a ``[source]`` link.
 
    .. rst:directive:option:: short-toc-name

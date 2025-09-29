@@ -105,7 +105,7 @@ class NixAutoOptionDirective(SphinxDirective):
                 "Example",
             )
 
-        if option.declarations != [] and self.config.nix_linkcode_resolve is None:
+        if option.declarations != [] and self.config.nixdomain_linkcode_resolve is None:
             declaration_nodes: list[nodes.Element] = [
                 nodes.term("Declared in", "Declared in"),
             ]
@@ -144,7 +144,7 @@ class NixAutoModuleDirective(SphinxDirective):
 
         short_toc_name = (
             {"short-toc-name": True}
-            if not self.config.nix_toc_display_full_path
+            if not self.config.nixdomain_toc_display_full_path
             else {}
         )
 

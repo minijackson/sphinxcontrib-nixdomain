@@ -79,8 +79,8 @@ class OptionDirective(ObjectDescription):
 
         declaration = self.options.get("declaration")
 
-        if declaration and self.config.nix_linkcode_resolve is not None:
-            uri = self.config.nix_linkcode_resolve(declaration)
+        if declaration and self.config.nixdomain_linkcode_resolve is not None:
+            uri = self.config.nixdomain_linkcode_resolve(declaration)
 
             # Mostly taken from the 'linkcode' builtin extension
             onlynode = addnodes.only(expr="html")

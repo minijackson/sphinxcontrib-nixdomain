@@ -4,7 +4,7 @@ Configuration
 .. role:: code-py(code)
    :language: Python
 
-.. confval:: nix_linkcode_resolve
+.. confval:: nixdomain_linkcode_resolve
    :type: :code-py:`Callable[[str], str] | None`
    :default: :code-py:`None`
 
@@ -14,11 +14,11 @@ Configuration
    to map *any* store path to a single GitHub repository:
 
    .. code-block:: python
-      :caption: :file:`conf.py` --- set :code-py:`nix_linkcode_resolve`
+      :caption: :file:`conf.py` --- set :code-py:`nixdomain_linkcode_resolve`
 
       source_repository = "https://github.com/user/repo"
 
-      def nix_linkcode_resolve(path: str) -> str:
+      def nixdomain_linkcode_resolve(path: str) -> str:
           # Strip the nix store and package
           relative_path = "/".join(Path(path).parts[4:])
           return f"{source_repository}/blob/{revision}/{relative_path}"
@@ -31,7 +31,7 @@ Configuration
    If :code-py:`None` (the default),
    the declaration path is put as-is in the content of the object.
 
-.. confval:: nix_toc_display_full_path
+.. confval:: nixdomain_toc_display_full_path
    :type: :code-py:`bool`
    :default: :code-py:`True`
 
