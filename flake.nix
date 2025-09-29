@@ -44,7 +44,10 @@
             pkgs.hatch
           ];
 
-          env.REVISION = self.rev or "main";
+          env = {
+            REVISION = self.rev or "main";
+            NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleOptionsJson;
+          };
         };
 
       lib = import ./lib { inherit (nixpkgs) lib; };
@@ -62,12 +65,13 @@
               system = "x86_64-linux";
             };
             inherit (config) options;
-            isOurs = option: lib.any (lib.hasPrefix "${self}") option.declarations;
-            doc = self.lib.optionAttrSetToDocList options;
-            ourDoc = lib.filter isOurs doc;
-            finalDoc = lib.listToAttrs (map (x: lib.nameValuePair x.name x) ourDoc);
           in
-          pkgs.writeText "options.json" (builtins.toJSON finalDoc);
+          self.lib.documentObjects {
+            options = self.lib.options.document {
+              inherit options;
+              prefix = "${self}/";
+            };
+          };
       };
 
       overlays.default = _final: prev: {
@@ -88,11 +92,10 @@
                   python.pkgs.pytestCheckHook
                 ];
 
-                preBuild = ''
-                  cp -v ${self.packages.x86_64-linux.exampleOptionsJson} options.json
-                '';
-
-                env.REVISION = self.rev or "main";
+                env = {
+                  REVISION = self.rev or "main";
+                  NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleOptionsJson;
+                };
               });
           })
         ];

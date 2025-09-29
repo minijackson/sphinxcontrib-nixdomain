@@ -11,6 +11,7 @@ from sphinx.directives import code
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
 
+from . import _data as autodata
 from ._utils import option_key_fun, skipped_options_levels, split_attr_path
 from .module import OptionDirective
 
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
     from typing import Any
 
-    from ._domain import AutoOptionDoc, NixDomain
+    from ._domain import NixDomain
 
 
 logger = logging.getLogger(__name__)
@@ -40,14 +41,14 @@ class NixAutoOptionDirective(SphinxDirective):
 
         short_toc_name = "short-toc-name" in self.options
 
-        if name not in nix.auto_options_doc:
+        option = autodata.get_option(name)
+        if option is None:
             logger.warning(
-                "Could not find option '%s' in any of the 'nix_options_json_files'",
+                "Could not find option '%s' in any of the 'nixdomain_objects' files",
                 name,
+                location=self.get_location(),
             )
             return []
-
-        option = nix.auto_options_doc[name]
 
         description = StringList()
         if option.description is not None:
@@ -129,17 +130,19 @@ class NixAutoModuleDirective(SphinxDirective):
         module = self.arguments[0]
         module_loc = split_attr_path(module)
 
-        def _is_part_of_module(option: AutoOptionDoc) -> bool:
+        def _is_part_of_module(option: autodata.Option) -> bool:
             return option.loc[: len(module_loc)] == module_loc
 
         options = [
-            name
-            for name, option in nix.auto_options_doc.items()
-            if _is_part_of_module(option)
+            name for name, option in autodata.options() if _is_part_of_module(option)
         ]
 
         if options == []:
-            logger.warning("No options found for module: '%s'", module)
+            logger.warning(
+                "No options found for module: '%s'",
+                module,
+                location=self.get_location(),
+            )
             return []
 
         short_toc_name = (
@@ -150,7 +153,7 @@ class NixAutoModuleDirective(SphinxDirective):
 
         result = []
 
-        if module not in nix.auto_options_doc:
+        if not autodata.has_option(module):
             result += OptionDirective(
                 "nix:option",
                 arguments=[module],

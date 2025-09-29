@@ -67,9 +67,5 @@ html_theme_options = {
 
 revision = os.environ.get("REVISION", "main")
 
-nix_options_json_files = ["./options.json"]
-
 def nixdomain_linkcode_resolve(path: str) -> str:
-    # Strip the nix store and package
-    relative_path = "/".join(Path(path).parts[4:])
-    return f"{source_repository}/blob/{revision}/{relative_path}"
+    return f"{source_repository}/blob/{revision}/{path}"

@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
-from functools import cached_property
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from sphinx.domains import Domain, ObjType
@@ -34,24 +31,6 @@ logger = logging.getLogger(__name__)
 #   choose whether the option prefix is repeated
 
 object_data = tuple[str, str, str, str, str, int]
-
-
-@dataclass
-class AutoOptionDoc:
-    name: str
-    loc: list[str]
-    typ: str | None
-    description: str | None
-    default: str | None
-    example: str | None
-    related_packages: str | None
-    declarations: list[str]
-    internal: bool
-    visible: bool
-    read_only: bool
-
-
-AutoOptionsDoc = dict[str, AutoOptionDoc]
 
 
 @dataclass
@@ -139,22 +118,6 @@ class NixDomain(Domain):
     }
     data_version = 0
 
-    @cached_property
-    def auto_options_doc(self) -> AutoOptionsDoc:
-        """Get the options documentation.
-
-        As specified by the ``nix_options_json_files`` configuration.
-        """
-        result = {}
-        for file in self.env.config.nix_options_json_files:
-            logger.info("Loading options doc: %s", file)
-            with Path(file).open() as f:
-                content: dict[str, dict] = json.load(f)
-                for k, v in content.items():
-                    result[k] = AutoOptionDoc(**v)
-
-        return result
-
     def get_bindings(self) -> Generator[RefEntity]:
         """Get all bindings in this domain."""
         yield from self.data["bindings"]
@@ -231,7 +194,7 @@ class NixDomain(Domain):
             context_path = split_attr_path(node.get("nix:package", ""))
             object_getter = self.get_packages
         else:
-            logger.warning("Unknown Nix object type: %s", objtype)
+            logger.warning("Unknown Nix object type: %s", objtype, location=node)
             return None
 
         target_path = split_attr_path(target)

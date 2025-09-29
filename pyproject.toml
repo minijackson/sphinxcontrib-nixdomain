@@ -27,7 +27,10 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
   "Topic :: Documentation :: Sphinx",
 ]
-dependencies = ["sphinx>=7.0.0"]
+dependencies = [
+    "pydantic>=2.0.0",
+    "sphinx>=7.0.0",
+]
 
 [project.optional-dependencies]
 docs = ["furo", "myst-parser"]

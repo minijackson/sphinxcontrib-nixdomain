@@ -178,7 +178,6 @@ class OptionsIndex(Index):
 
         nix = cast("NixDomain", self.domain)
 
-        # sort the list of recipes in alphabetical order
         options = list(nix.get_options())
         options = sorted(options)
 
