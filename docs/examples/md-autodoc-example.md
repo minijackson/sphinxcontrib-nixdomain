@@ -24,3 +24,21 @@ You can do it like so:
 
 ```{nix:automodule} services.autobar
 ```
+
+## Nix packages
+
+### Using `autopackage`
+
+```{autopackage} example1
+```
+
+```{autopackage} hello
+```
+
+```{autopackage} scope.nimScript
+```
+
+### Using `autopackages`
+
+```{autopackages}
+```

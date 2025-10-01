@@ -33,7 +33,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-docs = ["furo", "myst-parser"]
+docs = ["furo", "myst-parser", "sphinx-design"]
 tests = ["pytest"]
 
 [project.urls]

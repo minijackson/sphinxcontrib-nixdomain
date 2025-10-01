@@ -1,0 +1,51 @@
+{% if pkg.meta.broken %}
+{bdg-danger}`broken`
+{% endif %}
+{% if pkg.meta.insecure %}
+{bdg-danger}`insecure`
+{% endif %}
+{% if pkg.meta.unfree %}
+{bdg-warning}`unfree`
+{% endif %}
+
+{{ pkg.meta.description }}
+
+:name: `{{ pkg.name }}`
+{% if pkg.version %}
+:version: `{{ pkg.version }}`
+{% endif %}
+{% if pkg.meta.homepage %}
+:homepage: <{{ pkg.meta.homepage }}>
+{% endif %}
+{% if pkg.meta.download_page %}
+:download page: <{{ pkg.meta.download_page }}>
+{% endif %}
+{% if pkg.meta.changelog %}
+:changelog: <{{ pkg.meta.changelog }}>
+{% endif %}
+{% if pkg.meta.licenses %}
+:licenses:
+  {% for l in pkg.meta.licenses %}
+    {% if l.url %}
+    - [{{ l.full_name }}]({{ l.url }})
+    {% else %}
+    - {{ l.full_name }}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% for m in pkg.meta.maintainers %}
+	{% if m.email %}
+		{% set email %}[{{ m.email }}](mailto:{{ m.email }}){% endset %}
+	{% endif %}
+	{% if m.matrix %}
+		{% set matrix %}[{{ m.matrix }}](https://matrix.to/#/{{ m.matrix }}){% endset %}
+	{% endif %}
+	{% if m.github %}
+		{% set github %}[{{ m.github }}](https://github.com/{{ m.github }}){% endset %}
+	{% endif %}
+:maintainer {{ m.name }}: {{ [email, matrix, github] | select("defined") | join(", ") }}
+{% else %}
+:maintainers: none declared
+{% endfor %}
+
+{% if pkg.meta.long_description %}{{ pkg.meta.long_description }}{% endif %}

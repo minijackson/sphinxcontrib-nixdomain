@@ -8,7 +8,7 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
-from sphinx.util.docfields import Field, TypedField
+from sphinx.util.docfields import Field, GroupedField, TypedField
 
 from ._utils import split_attr_path
 
@@ -35,11 +35,16 @@ class PackageDirective(ObjectDescription):
         "declaration": directives.unchanged,
     }
 
-    doc_field_types: list[Field] = [
+    doc_field_types: list[Field] = [  # noqa: RUF012
         TypedField(
             "override",
             label="Overrides",
             names=("override", "overrides"),
+        ),
+        GroupedField(
+            "maintainer",
+            label="Maintainers",
+            names=("maintainer", "maintainers"),
         ),
     ]
 

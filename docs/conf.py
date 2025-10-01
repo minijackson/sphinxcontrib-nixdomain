@@ -27,6 +27,7 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.intersphinx",
     "myst_parser",
+    "sphinx_design",
 ]
 
 templates_path = ["_templates"]
@@ -67,5 +68,12 @@ html_theme_options = {
 
 revision = os.environ.get("REVISION", "main")
 
+
 def nixdomain_linkcode_resolve(path: str) -> str:
     return f"{source_repository}/blob/{revision}/{path}"
+
+
+# -- Options for the MyST parser ---------------------------------------------
+# https://myst-parser.readthedocs.io/en/latest/configuration.html
+
+myst_enable_extensions = ["colon_fence", "fieldlist"]

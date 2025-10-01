@@ -71,6 +71,11 @@
               inherit options;
               prefix = "${self}/";
             };
+
+            packages = self.lib.packages.document {
+              packages = import ./examples/packages pkgs;
+              prefix = "${self}/";
+            };
           };
       };
 

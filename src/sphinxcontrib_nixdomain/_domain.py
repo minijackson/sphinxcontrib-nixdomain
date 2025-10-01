@@ -9,6 +9,7 @@ from sphinx.util import logging
 from sphinx.util.nodes import make_refnode
 
 from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
+from ._package_autodoc import NixAutoPackageDirective, NixAutoPackagesDirective
 from ._utils import EntityType, option_lt, split_attr_path
 from .library import FunctionDirective, LibraryIndex
 from .module import OptionDirective, OptionsIndex
@@ -103,6 +104,8 @@ class NixDomain(Domain):
     directives = {  # noqa: RUF012
         "automodule": NixAutoModuleDirective,
         "autooption": NixAutoOptionDirective,
+        "autopackage": NixAutoPackageDirective,
+        "autopackages": NixAutoPackagesDirective,
         "function": FunctionDirective,
         "option": OptionDirective,
         "package": PackageDirective,
