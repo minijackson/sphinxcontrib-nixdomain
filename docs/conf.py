@@ -45,6 +45,9 @@ intersphinx_mapping = {
 html_static_path = ["_static"]
 html_baseurl = "https://minijackson.github.io/sphinxcontrib-nixdomain/"
 
+
+html_css_files = ["field-lists.css"]
+
 html_theme = "furo"
 html_theme_options = {
     "source_repository": source_repository,
