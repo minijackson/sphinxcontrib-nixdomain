@@ -42,3 +42,15 @@ You can do it like so:
 
 ```{autopackages}
 ```
+
+## Nix library
+
+### Using `autofunction`
+
+```{autofunction} lib.documentObjects
+```
+
+### Using `autolibrary`
+
+```{autolibrary}
+```

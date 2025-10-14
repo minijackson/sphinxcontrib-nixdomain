@@ -50,7 +50,10 @@
           };
         };
 
-      lib = import ./lib { inherit (nixpkgs) lib; };
+      lib = import ./lib {
+        inherit (nixpkgs) lib;
+        inherit pkgs;
+      };
 
       packages.x86_64-linux = {
         inherit (pkgs.python3.pkgs) sphinxcontrib-nixdomain;
@@ -67,15 +70,10 @@
             inherit (config) options;
           in
           self.lib.documentObjects {
-            options = self.lib.options.document {
-              inherit options;
-              prefix = "${self}/";
-            };
-
-            packages = self.lib.packages.document {
-              packages = import ./examples/packages pkgs;
-              prefix = "${self}/";
-            };
+            prefix = "${self}/";
+            options.options = options;
+            packages.packages = import ./examples/packages pkgs;
+            library.library = self.lib;
           };
       };
 

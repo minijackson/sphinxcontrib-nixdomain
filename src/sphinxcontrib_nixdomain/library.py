@@ -1,16 +1,18 @@
-"""Handle a Nix library API, such as functions and other bindings."""
+"""Handle a Nix library API, such as functions."""
 
 from __future__ import annotations
 
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, ClassVar, cast
 
+from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Index, IndexEntry
+from sphinx.util.docfields import Field, GroupedField, TypedField
 
-from ._utils import EntityType, split_attr_path
+from ._utils import split_attr_path
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
@@ -31,22 +33,67 @@ class FunctionDirective(ObjectDescription):
         "no-index-entry": directives.flag,
         "no-contents-entry": directives.flag,
         "no-typesetting": directives.flag,
-        "type": directives.unchanged,
+        "declaration": directives.unchanged,
     }
+
+    doc_field_types: list[Field] = [  # noqa: RUF012
+        # Mostly taken from the Python domain
+        TypedField(
+            "parameter",
+            label="Parameters",
+            names=(
+                "param",
+                "parameter",
+                "arg",
+                "argument",
+                "keyword",
+                "kwarg",
+                "kwparam",
+            ),
+            typenames=("paramtype", "type"),
+            can_collapse=True,
+        ),
+        Field(
+            "returnvalue",
+            label="Returns",
+            has_arg=False,
+            names=("returns", "return"),
+        ),
+        Field(
+            "returntype",
+            label="Return type",
+            has_arg=False,
+            names=("rtype",),
+        ),
+    ]
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the function given its signature."""
-        # TODO: attribute path to the function
         signode["fullname"] = fullname = sig
+        signode["path-parts"] = sig_names = split_attr_path(sig)
+        signode["name"] = sig_names[-1]
 
-        signode["path-parts"] = split_attr_path(sig)
-        # parent_opts = self.env.ref_context.setdefault("nix:option", [])
-        # signode["fullname"] = ".".join(parent_opts + [sig])
+        for el in sig_names[:-1]:
+            signode += addnodes.desc_addname(text=el)
+            signode += addnodes.desc_sig_punctuation(text=".")
 
-        # TODO: arguments
-        # TODO: return type
+        signode += addnodes.desc_name(text=sig_names[-1])
 
-        signode += addnodes.desc_name(text=sig)
+        declaration = self.options.get("declaration")
+
+        if declaration and self.config.nixdomain_linkcode_resolve is not None:
+            uri = self.config.nixdomain_linkcode_resolve(declaration)
+
+            # Mostly taken from the 'linkcode' builtin extension
+            onlynode = addnodes.only(expr="html")
+            onlynode += nodes.reference(
+                "",
+                "",
+                nodes.inline("", "[source]", classes=["viewcode-link"]),
+                internal=False,
+                refuri=uri,
+            )
+            signode += onlynode
 
         return fullname
 
@@ -60,7 +107,7 @@ class FunctionDirective(ObjectDescription):
         signode["ids"].append(_function_target(fullname))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_binding(fullname, EntityType.FUNCTION, {})
+        nix.add_function(fullname, {})
 
         if "no-index-entry" not in self.options:
             self.indexnode["entries"].append(
@@ -73,16 +120,25 @@ class FunctionDirective(ObjectDescription):
                 ),
             )
 
-    # def before_content(self) -> None:
-    #     module_opts = self.env.ref_context.setdefault("nix:option", [])
-    #     module_opts.append(self.names[-1])
-    #
-    # def after_content(self) -> None:
-    #     module_opts = self.env.ref_context.setdefault("nix:option", [])
-    #     if module_opts:
-    #         module_opts.pop()
-    #     else:
-    #         self.env.ref_context.pop("nix:option")
+    def before_content(self) -> None:
+        """Insert content before a function.
+
+        In this instance, we insert ourself in the context
+        so that we can refer to functions in the same scope.
+        """
+        scope = self.env.ref_context.setdefault("nix:function", [])
+        scope.append(self.names[-1])
+
+    def after_content(self) -> None:
+        """Insert content after a option.
+
+        In this instance, we remove our scope from the context.
+        """
+        scope = self.env.ref_context.setdefault("nix:function", [])
+        if scope:
+            scope.pop()
+        else:
+            self.env.ref_context.pop("nix:function")
 
     def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
         return tuple(signode["path-parts"])
@@ -117,29 +173,24 @@ class LibraryIndex(Index):
 
         nix = cast("NixDomain", self.domain)
 
-        # sort the list of recipes in alphabetical order
-        bindings = list(nix.get_bindings())
-        bindings = sorted(bindings)
+        functions = list(nix.get_functions())
+        functions = sorted(functions)
 
-        # generate the expected output, shown below, from the above using the
-        # first letter of the recipe as a key to group thing
-        #
-        # TODO: use the attribute path as key?
-        for binding in bindings:
-            entries = content.setdefault(binding.path[0].lower(), [])
+        for function in functions:
+            entries = content.setdefault(function.path[0].lower(), [])
             # No need to handle nesting,
             # Sphinx currently support only one level of nesting,
             # which would be weird with Nix module options
             entries.append(
                 # name, subtype, docname, anchor, extra, qualifier, description
                 IndexEntry(
-                    binding.path,
+                    function.path,
                     0,
-                    binding.docname,
-                    binding.anchor,
-                    binding.docname,
+                    function.docname,
+                    function.anchor,
+                    function.docname,
                     "",
-                    binding.typ,
+                    function.typ,
                 ),
             )
 

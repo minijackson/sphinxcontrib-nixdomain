@@ -3,11 +3,13 @@ from pathlib import Path
 from typing import Annotated, Any
 
 from pydantic import BaseModel as PydanticBaseModel
-from pydantic import BeforeValidator, ConfigDict, Field
+from pydantic import BeforeValidator, ConfigDict, Field, model_validator
 from sphinx._cli.util.colour import bold
 from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx.util import logging
+
+from ._utils import split_attr_path
 
 logger = logging.getLogger(__name__)
 
@@ -86,9 +88,24 @@ class Package(BaseModel):
     meta: PackageMeta
 
 
+class Function(BaseModel):
+    name: str
+    loc: list[str]
+    description: str
+    location: str | None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _set_loc(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            data["loc"] = split_attr_path(data["name"])
+        return data
+
+
 class Objects(BaseModel):
     options: dict[str, Option] = {}
     packages: dict[str, Package] = {}
+    library: dict[str, Function] = {}
 
 
 _OBJECTS: Objects
@@ -100,9 +117,10 @@ def load_object_files(_app: Sphinx, config: Config) -> None:
         global _OBJECTS
         _OBJECTS = Objects.model_validate_json(Path(file).read_text())
         logger.info(
-            "loaded %s options, %s packages",
+            "loaded %s options, %s packages, and %s functions",
             len(_OBJECTS.options),
             len(_OBJECTS.packages),
+            len(_OBJECTS.library),
         )
 
 
@@ -124,3 +142,11 @@ def get_package(name: str) -> Package | None:
 
 def packages() -> Iterable[tuple[str, Package]]:
     return _OBJECTS.packages.items()
+
+
+def get_function(name: str) -> Function | None:
+    return _OBJECTS.library.get(name)
+
+
+def functions() -> Iterable[tuple[str, Function]]:
+    return _OBJECTS.library.items()

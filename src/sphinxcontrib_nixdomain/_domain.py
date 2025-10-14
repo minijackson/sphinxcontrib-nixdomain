@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from sphinx.domains import Domain, ObjType
 from sphinx.roles import XRefRole
 from sphinx.util import logging
 from sphinx.util.nodes import make_refnode
 
+from ._library_autodoc import NixAutoFunctionDirective, NixAutoLibraryDirective
 from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
 from ._package_autodoc import NixAutoPackageDirective, NixAutoPackagesDirective
 from ._utils import EntityType, option_lt, split_attr_path
@@ -38,7 +39,7 @@ object_data = tuple[str, str, str, str, str, int]
 class RefEntity:
     """A referenceable Nix entity.
 
-    This can be for example a binding (function, package) or an option.
+    This can be for example a function, package, or an option.
 
     This dataclass is used to figure out the entity's info
     when a reference is resolved.
@@ -71,6 +72,13 @@ class RefEntity:
         return self.path < other.path
 
 
+T = TypeVar("T")
+
+
+def _last(li: list[T], default: T = None) -> T:
+    return next(iter(li[-1:]), default)
+
+
 class NixXRefRole(XRefRole):
     def process_link(
         self,
@@ -80,7 +88,8 @@ class NixXRefRole(XRefRole):
         title: str,
         target: str,
     ) -> tuple[str, str]:
-        refnode["nix:option"] = env.ref_context.get("nix:option", [""])[-1]
+        refnode["nix:option"] = _last(env.ref_context.get("nix:option", []), "")
+        refnode["nix:function"] = _last(env.ref_context.get("nix:function", []), "")
         return super().process_link(env, refnode, has_explicit_title, title, target)
 
 
@@ -102,6 +111,8 @@ class NixDomain(Domain):
         "obj": NixXRefRole(warn_dangling=True),
     }
     directives = {  # noqa: RUF012
+        "autolibrary": NixAutoLibraryDirective,
+        "autofunction": NixAutoFunctionDirective,
         "automodule": NixAutoModuleDirective,
         "autooption": NixAutoOptionDirective,
         "autopackage": NixAutoPackageDirective,
@@ -115,15 +126,15 @@ class NixDomain(Domain):
         OptionsIndex,
     ]
     initial_data = {  # noqa: RUF012
-        "bindings": [],
+        "functions": [],
         "options": [],
         "packages": [],
     }
     data_version = 0
 
-    def get_bindings(self) -> Generator[RefEntity]:
-        """Get all bindings in this domain."""
-        yield from self.data["bindings"]
+    def get_functions(self) -> Generator[RefEntity]:
+        """Get all functions in this domain."""
+        yield from self.data["functions"]
 
     def get_options(self) -> Generator[RefEntity]:
         """Get all options in this domain."""
@@ -137,7 +148,7 @@ class NixDomain(Domain):
         """Get all entities in this domain."""
         yield from self.get_options()
         yield from self.get_packages()
-        yield from self.get_bindings()
+        yield from self.get_functions()
 
     def get_objects(self) -> Generator[object_data]:
         """Get all entities in this domain.
@@ -187,9 +198,8 @@ class NixDomain(Domain):
     ) -> Element | None:
         object_getter = None
         if objtype == "function":
-            context_path = []
-            # TODO: fix that, a function is not necessarily any binding
-            object_getter = self.get_bindings
+            context_path = split_attr_path(node.get("nix:function", ""))
+            object_getter = self.get_functions
         elif objtype == "option":
             context_path = split_attr_path(node.get("nix:option", ""))
             object_getter = self.get_options
@@ -228,17 +238,16 @@ class NixDomain(Domain):
 
         return None
 
-    def add_binding(
+    def add_function(
         self,
         path: str,
-        typ: EntityType,
         _arguments: dict[str, str],
     ) -> None:
-        """Add a new binding to the domain."""
+        """Add a new function to the domain."""
         anchor = f"nix-function-{path}"
 
-        self.data["bindings"].append(
-            RefEntity(path, path, typ, self.env.docname, anchor, 0),
+        self.data["functions"].append(
+            RefEntity(path, path, EntityType.FUNCTION, self.env.docname, anchor, 0),
         )
 
     def add_option(self, path: str, _options: dict[str, str]) -> None:

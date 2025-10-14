@@ -1,6 +1,6 @@
-args:
+{ lib, pkgs, ... }@args:
 
-{
+lib.fix (self: {
   /**
     Document the given objects.
 
@@ -15,11 +15,21 @@ args:
   */
   documentObjects =
     {
+      prefix,
       options ? { },
       packages ? { },
-    }@args:
-    builtins.toFile "nix-objects.json" (builtins.toJSON args);
+      library ? { },
+    }:
+    let
+      common = { inherit prefix; };
+    in
+    pkgs.callPackage ./build-objects-json.nix { } {
+      options = self.options.document (common // options);
+      packages = self.packages.document (common // packages);
+      library = self.library.document (common // library);
+    };
 
+  library = import ./library.nix args;
   options = import ./options args;
   packages = import ./packages args;
-}
+})
