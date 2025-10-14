@@ -49,9 +49,7 @@ class NixAutoPackageDirective(SphinxDirective):
 
         directive_options: dict[str, Any] = {}
         if package.meta.position is not None:
-            [file, _line] = package.meta.position.split(":")
-            # TODO: handle line-number
-            directive_options["declaration"] = file
+            directive_options["declaration"] = package.meta.position
 
         return PackageDirective(
             "nix:package",

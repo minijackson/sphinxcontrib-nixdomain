@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, nixdomainLib, ... }:
 {
   /**
     URLify the declarations of the given option.
@@ -8,11 +8,6 @@
     :returns: the modified option
   */
   relativeDeclaration =
-    prefix: option:
-    option
-    // {
-      declarations = map (lib.removePrefix prefix) (
-        lib.filter (lib.hasPrefix prefix) option.declarations
-      );
-    };
+    sources: option:
+    option // { declarations = map (nixdomainLib.utils.pathToURL sources) option.declarations; };
 }

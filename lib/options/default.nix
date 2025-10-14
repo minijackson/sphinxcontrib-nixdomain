@@ -1,23 +1,20 @@
-{ lib, ... }@args:
+{ lib, nixdomainLib, ... }@args:
 
 lib.fix (self: {
   /**
     :param str prefix: TODO
-
-    TODO: make sure to convert `prefix` to string, and add a trailing slash.
-    Or, we normalize the prefix.
   */
   document =
     {
-      prefix,
+      sources,
       options ? { },
       filters ? [
         self.filters.isVisible
-        (self.filters.isDeclaredIn prefix)
+        (self.filters.isDeclaredIn sources.self)
       ],
       extraFilters ? [ ],
       modifiers ? [
-        (self.modifiers.relativeDeclaration prefix)
+        (self.modifiers.relativeDeclaration sources)
       ],
       extraModifiers ? [ ],
     }:

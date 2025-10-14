@@ -5,9 +5,13 @@
 
 import os
 import sys
-from pathlib import Path
+from urllib.parse import urlsplit
+
+from sphinx.util import logging
 
 sys.path.append(os.path.abspath("../src"))  # noqa: PTH100
+
+logger = logging.getLogger(__name__)
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -73,7 +77,18 @@ revision = os.environ.get("REVISION", "main")
 
 
 def nixdomain_linkcode_resolve(path: str) -> str:
-    return f"{source_repository}/blob/{revision}/{path}"
+    url = urlsplit(path)
+
+    fragment = "#" + url.fragment if url.fragment else ""
+
+    match url.netloc:
+        case "self":
+            return f"{source_repository}/blob/{revision}{url.path}{fragment}"
+        case "nixpkgs":
+            return f"https://github.com/NixOS/nixpkgs/blob/master{url.path}{fragment}"
+
+    logger.warning("no source repository for url: %s", path)
+    return ""
 
 
 # -- Options for the MyST parser ---------------------------------------------

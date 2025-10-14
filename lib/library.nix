@@ -1,6 +1,6 @@
-{ lib, ... }:
+{ lib, nixdomainLib, ... }:
 
-lib.fix (self: {
+{
   /**
     :param str prefix: TODO
   */
@@ -9,10 +9,11 @@ lib.fix (self: {
       sources,
       library ? { },
       name ? "lib",
-      prefix,
     }:
     let
       libraryName = name;
+
+      pathToURL = nixdomainLib.utils.pathToURL sources;
 
       /**
         A list of `{ name = loc; value = pos; }` of the given library
@@ -47,7 +48,7 @@ lib.fix (self: {
               libName = lib.optional (libraryName != "") libraryName;
             in
             lib.showOption (libName ++ name);
-          value = if value ? file then lib.removePrefix prefix value.file else null;
+          value = if value ? file then pathToURL value.file else null;
         };
 
       /**
@@ -62,11 +63,19 @@ lib.fix (self: {
       ];
 
       /**
+        For all declared `sources` add them to the given string as context.
+
+        This is so that the source is added as build input when running nixdoc,
+        else it won't be able to read source files.
+      */
+      addContext = str: lib.pipe str (map lib.addContextFrom (lib.attrValues sources));
+
+      /**
         Command-line arguments for `nixdoc`
       */
       nixdocInvocation =
         file: category:
-        lib.addContextFrom prefix (
+        addContext (
           lib.cli.toGNUCommandLineShell { } {
             inherit file category;
             json-output = true;
@@ -128,4 +137,4 @@ lib.fix (self: {
     {
       inherit nixdocInvocations;
     };
-})
+}

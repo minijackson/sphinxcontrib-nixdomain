@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, nixdomainLib, ... }:
 {
   /**
     URLify the position of the given package.
@@ -9,14 +9,22 @@
     :returns: the modified package
   */
   relativePosition =
-    prefix: pkg:
+    sources: pkg:
     if !pkg.meta ? position then
       pkg
     else
       pkg
       // {
         meta = pkg.meta // {
-          position = lib.removePrefix prefix pkg.meta.position;
+          position =
+            let
+              posElements = lib.splitString ":" pkg.meta.position;
+              filePos = lib.elemAt posElements 0;
+              linePos = lib.elemAt posElements 1;
+              lineFragment = lib.optionalString (lib.length posElements >= 2) "#L${linePos}";
+              pos = "${filePos}${lineFragment}";
+            in
+            nixdomainLib.utils.pathToURL sources pos;
         };
       };
 
