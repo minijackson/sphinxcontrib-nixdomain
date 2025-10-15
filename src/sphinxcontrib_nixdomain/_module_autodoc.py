@@ -158,11 +158,18 @@ class NixAutoModuleDirective(SphinxDirective):
 
         directive_options: dict[str, Any] = self.options
 
+        # `no-typesetting` allows not showing the option on the page,
+        # `no-index-entry` allows not showing it in the `genindex`,
+        # but still have cross-references.
+        in_between_directive_options = copy(directive_options)
+        in_between_directive_options["no-typesetting"] = True
+        in_between_directive_options["no-index-entry"] = True
+
         if not autodata.has_option(module):
             result += OptionDirective(
                 "nix:option",
                 arguments=[module],
-                options=directive_options,
+                options=in_between_directive_options,
                 content=StringList(),
                 lineno=self.lineno,
                 content_offset=self.content_offset,
@@ -183,7 +190,7 @@ class NixAutoModuleDirective(SphinxDirective):
                 result += OptionDirective(
                     "nix:option",
                     arguments=[in_between_option],
-                    options=directive_options,
+                    options=in_between_directive_options,
                     content=StringList(),
                     lineno=self.lineno,
                     content_offset=self.content_offset,
