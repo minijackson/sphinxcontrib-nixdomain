@@ -1,8 +1,50 @@
-{ lib, nixdomainLib, ... }@args:
+{ lib, ... }@args:
 
 lib.fix (self: {
   /**
-    :param str prefix: TODO
+    Document the given options.
+
+    :::{tip}
+    This function is called by {nix:func}`nixdomainLib.documentObjects`
+    with its `options` attribute value.
+    There is no need to call it directly,
+    pass the arguments of this function
+    to the `options` attribute
+    of the {nix:func}`nixdomainLib.documentObjects` function.
+    :::
+
+    :type:
+      ```
+      {
+        sources;
+        options;
+        filters;
+        extraFilters;
+        modifiers;
+        extraModifiers;
+      } -> attrSet
+      ```
+
+    :param attrSet of strings sources: see {nix:func}`nixdomainLib.documentObjects`.
+    :param attrSet of options options:
+      the set of options to document,
+      as returned by `(lib.nixosSystem { ... }).options`.
+    :param list of (option -> bool) functions filters:
+      a list of function that filters the set of options to document.
+      By default,
+      keep only visible options
+      that are declared in the `self` source.
+    :param list of (option -> bool) functions extraFilters:
+      extra filters to apply in addition to `filters`.
+    :param list of (option -> option) functions modifiers:
+      apply this list of function to each option.
+      By default,
+      make the option declarations relative to the given `sources`.
+    :param list of (option -> option) functions extraModifiers:
+      extra modifiers to apply in addition to `modifiers`.
+    :returns:
+      an attribute set of options,
+      usable by the `sphinxcontrib-nixdomain` Sphinx extension.
   */
   document =
     {

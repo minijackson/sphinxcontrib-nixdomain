@@ -41,7 +41,6 @@ def setup(app: Sphinx) -> ExtensionMetadata:
     )
     # Not "html" here, because we'd get a warning about the function being unpickable
     app.add_config_value("nixdomain_linkcode_resolve", None, "")
-    app.add_config_value("nixdomain_toc_display_full_path", True, "html", bool)  # noqa: FBT003
 
     app.connect("config-inited", load_object_files)
 

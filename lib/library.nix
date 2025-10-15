@@ -2,7 +2,34 @@
 
 {
   /**
-    :param str prefix: TODO
+    Document the given functions.
+
+    :::{tip}
+    This function is called by {nix:func}`nixdomainLib.documentObjects`
+    with its `library` attribute value.
+    There is no need to call it directly,
+    pass the arguments of this function
+    to the `library` attribute
+    of the {nix:func}`nixdomainLib.documentObjects` function.
+    :::
+
+    :type:
+      ```
+      { sources; library; name; } -> list
+      ```
+
+    :param attrSet of strings sources: see {nix:func}`nixdomainLib.documentObjects`.
+    :param attrSet of functions library:
+      the set of functions to document.
+      Recurses into children attribute sets
+      and ignores undocumented functions.
+    :param string name:
+      The name/prefix of the library.
+      Defaults to `"lib"`.
+    :returns:
+      a list of `nixdoc` invocations
+      to be run by {nix:func}`nixdomainLib.documentObjects`,
+      which is then usable by the `sphinxcontrib-nixdomain` Sphinx extension.
   */
   document =
     {

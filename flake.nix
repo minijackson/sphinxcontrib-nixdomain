@@ -79,7 +79,13 @@
             };
             options.options = options;
             packages.packages = import ./examples/packages pkgs;
-            library.library = self.lib;
+            library = {
+              name = "";
+              library = {
+                nixdomainLib = self.lib;
+                exampleLib = import ./examples/library;
+              };
+            };
           };
       };
 

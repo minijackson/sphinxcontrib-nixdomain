@@ -31,7 +31,6 @@ class PackageDirective(ObjectDescription):
         "no-index-entry": directives.flag,
         "no-contents-entry": directives.flag,
         "no-typesetting": directives.flag,
-        "short-toc-name": directives.flag,
         "declaration": directives.unchanged,
     }
 
@@ -76,8 +75,6 @@ class PackageDirective(ObjectDescription):
             )
             signode += onlynode
 
-        signode["short-toc-name"] = "short-toc-name" in self.options
-
         return fullname
 
     def add_target_and_index(
@@ -109,9 +106,6 @@ class PackageDirective(ObjectDescription):
     def _toc_entry_name(self, signode: desc_signature) -> str:
         if not signode.get("_toc_parts"):
             return ""
-
-        if signode["short-toc-name"]:
-            return signode["name"]
 
         return signode["fullname"]
 

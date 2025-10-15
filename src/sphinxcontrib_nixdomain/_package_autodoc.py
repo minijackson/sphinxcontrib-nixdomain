@@ -1,7 +1,10 @@
+from collections.abc import Callable
+from copy import copy
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 from docutils import nodes
+from docutils.parsers.rst import directives
 from docutils.statemachine import StringList, string2lines
 from jinja2.sandbox import SandboxedEnvironment
 from sphinx.util import logging
@@ -18,6 +21,12 @@ logger = logging.getLogger(__name__)
 class NixAutoPackageDirective(SphinxDirective):
     has_content = False
     required_arguments = 1
+    option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
+        "no-index": directives.flag,
+        "no-index-entry": directives.flag,
+        "no-contents-entry": directives.flag,
+        "no-typesetting": directives.flag,
+    }
 
     def run(self) -> list[nodes.Node]:
         name = self.arguments[0]
@@ -47,7 +56,7 @@ class NixAutoPackageDirective(SphinxDirective):
         template = env.get_template("nixdomain/package.md.jinja")
         content = template.render({"pkg": package, "name": name})
 
-        directive_options: dict[str, Any] = {}
+        directive_options: dict[str, Any] = copy(self.options)
         if package.meta.position is not None:
             directive_options["declaration"] = package.meta.position
 
@@ -76,6 +85,12 @@ class NixAutoPackagesDirective(SphinxDirective):
     has_content = False
     required_arguments = 0
     optional_arguments = 1
+    option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
+        "no-index": directives.flag,
+        "no-index-entry": directives.flag,
+        "no-contents-entry": directives.flag,
+        "no-typesetting": directives.flag,
+    }
 
     def run(self) -> list[nodes.Node]:
         scope = self.arguments[0] if len(self.arguments) >= 1 else ""
@@ -96,13 +111,11 @@ class NixAutoPackagesDirective(SphinxDirective):
 
         result: list[nodes.Node] = []
 
-        # TODO: sort?
         for pkg in pkgs:
             result += NixAutoPackageDirective(
                 "nix:autopackage",
                 arguments=[pkg],
-                # TODO:
-                options={},
+                options=self.options,
                 content=StringList(),
                 lineno=self.lineno,
                 content_offset=self.content_offset,

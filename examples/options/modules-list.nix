@@ -1,4 +1,3 @@
 [
   ./autobar.nix
-  ./autofoo.nix
 ]

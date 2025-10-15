@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from copy import copy
+from typing import TYPE_CHECKING, Any, ClassVar
 
+from docutils.parsers.rst import directives
 from docutils.statemachine import StringList, string2lines
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
@@ -13,8 +15,10 @@ from ._utils import split_attr_path
 from .library import FunctionDirective
 
 if TYPE_CHECKING:
-    from docutils import nodes
+    from collections.abc import Callable
     from typing import Any
+
+    from docutils import nodes
 
     from ._domain import NixDomain
 
@@ -25,6 +29,12 @@ logger = logging.getLogger(__name__)
 class NixAutoFunctionDirective(SphinxDirective):
     has_content = False
     required_arguments = 1
+    option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
+        "no-index": directives.flag,
+        "no-index-entry": directives.flag,
+        "no-contents-entry": directives.flag,
+        "no-typesetting": directives.flag,
+    }
 
     def run(self) -> list[nodes.Node]:
         name = self.arguments[0]
@@ -50,7 +60,7 @@ class NixAutoFunctionDirective(SphinxDirective):
                 source="<Nix function documentation>",
             )
 
-        directive_options: dict[str, Any] = {}
+        directive_options: dict[str, Any] = copy(self.options)
         if function.location is not None:
             directive_options["declaration"] = function.location
 
@@ -66,10 +76,17 @@ class NixAutoFunctionDirective(SphinxDirective):
             state_machine=self.state_machine,
         ).run()
 
+
 class NixAutoLibraryDirective(SphinxDirective):
     has_content = False
     required_arguments = 0
     optional_arguments = 1
+    option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
+        "no-index": directives.flag,
+        "no-index-entry": directives.flag,
+        "no-contents-entry": directives.flag,
+        "no-typesetting": directives.flag,
+    }
 
     def run(self) -> list[nodes.Node]:
         scope = self.arguments[0] if len(self.arguments) >= 1 else ""
@@ -95,8 +112,7 @@ class NixAutoLibraryDirective(SphinxDirective):
             result += NixAutoFunctionDirective(
                 "",
                 arguments=[fun],
-                # TODO:
-                options={},
+                options=self.options,
                 content=StringList(),
                 lineno=self.lineno,
                 content_offset=self.content_offset,

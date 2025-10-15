@@ -1,12 +1,11 @@
-Manual example
-==============
-
-.. TODO: explain more, present functions used
+Manual declarations
+===================
 
 Functions
 ---------
 
 .. nix:function:: toString
+   :no-index-entry:
 
    Convert the given value to a string
 
@@ -20,6 +19,7 @@ Packages
 --------
 
 .. nix:package:: python3Packages.bla
+   :no-index-entry:
 
    Hello this is a description.
 
@@ -51,6 +51,7 @@ Service Foo
 ^^^^^^^^^^^
 
 .. nix:option:: services.foo.enable
+   :no-index-entry:
 
    Enable the Foo service
 
@@ -66,6 +67,7 @@ Service Foo
 
 
 .. nix:option:: services.foo.settings
+   :no-index-entry:
    :type: submodule
 
    Settings for Foo
@@ -84,6 +86,7 @@ Service Foo
 
 
 .. nix:option:: services.foo.settings.baz
+   :no-index-entry:
    :type: list of (string)
    :read-only:
 
@@ -103,10 +106,11 @@ Service Bar
 ^^^^^^^^^^^
 
 .. nix:option:: services.bar
-   :type: submodule
    :no-index-entry:
+   :type: submodule
 
    .. nix:option:: enable
+      :no-index-entry:
 
       Enable the Bar service
 
@@ -122,6 +126,7 @@ Service Bar
 
 
    .. nix:option:: settings
+      :no-index-entry:
       :type: attribute set
 
       Settings for Bar
@@ -140,6 +145,7 @@ Service Bar
 
 
       .. nix:option:: baz
+         :no-index-entry:
          :type: list of (string)
 
          List of config to handle
@@ -159,15 +165,21 @@ Python
 ------
 
 .. py:module:: TheModule
+   :no-index-entry:
 
    Hello
 
    .. py:class:: TheClass(int, float)
+      :no-index-entry:
 
       .. py:class:: Thing
+         :no-index-entry:
 
          .. py:method:: bla(str, list[str])
+            :no-index-entry:
 
    .. py:class:: Thing
+      :no-index-entry:
 
       .. py:method:: bla(str, list[str])
+         :no-index-entry:

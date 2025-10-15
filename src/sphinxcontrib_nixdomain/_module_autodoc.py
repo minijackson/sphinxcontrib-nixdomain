@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import copy
 from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 from docutils import nodes
@@ -31,15 +32,14 @@ class NixAutoOptionDirective(SphinxDirective):
     has_content = False
     required_arguments = 1
     option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
-        "short-toc-name": directives.flag,
+        "no-index": directives.flag,
+        "no-index-entry": directives.flag,
+        "no-contents-entry": directives.flag,
+        "no-typesetting": directives.flag,
     }
 
     def run(self) -> list[nodes.Node]:
-        nix = cast("NixDomain", self.env.get_domain("nix"))
-
         name = self.arguments[0]
-
-        short_toc_name = "short-toc-name" in self.options
 
         option = autodata.get_option(name)
         if option is None:
@@ -62,15 +62,13 @@ class NixAutoOptionDirective(SphinxDirective):
                 source="<NixOS-like option>",
             )
 
-        directive_options: dict[str, Any] = {}
+        directive_options: dict[str, Any] = copy(self.options)
+
         if option.typ is not None:
             directive_options["type"] = option.typ
 
         if option.read_only:
             directive_options["read-only"] = True
-
-        if short_toc_name:
-            directive_options["short-toc-name"] = True
 
         if option.declarations != []:
             # Not sure how to handle multiple declarations
@@ -87,6 +85,11 @@ class NixAutoOptionDirective(SphinxDirective):
             state=self.state,
             state_machine=self.state_machine,
         ).run()
+
+        # HACK: if no-typesetting is given,
+        # the directive doesn't return any content.
+        if len(rendered[-1]) < 2:
+            return rendered
 
         rendered_content = rendered[-1][-1]
 
@@ -123,6 +126,12 @@ class NixAutoOptionDirective(SphinxDirective):
 class NixAutoModuleDirective(SphinxDirective):
     has_content = False
     required_arguments = 1
+    option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
+        "no-index": directives.flag,
+        "no-index-entry": directives.flag,
+        "no-contents-entry": directives.flag,
+        "no-typesetting": directives.flag,
+    }
 
     def run(self) -> list[nodes.Node]:
         nix = cast("NixDomain", self.env.get_domain("nix"))
@@ -145,19 +154,15 @@ class NixAutoModuleDirective(SphinxDirective):
             )
             return []
 
-        short_toc_name = (
-            {"short-toc-name": True}
-            if not self.config.nixdomain_toc_display_full_path
-            else {}
-        )
-
         result = []
+
+        directive_options: dict[str, Any] = self.options
 
         if not autodata.has_option(module):
             result += OptionDirective(
                 "nix:option",
                 arguments=[module],
-                options={},
+                options=directive_options,
                 content=StringList(),
                 lineno=self.lineno,
                 content_offset=self.content_offset,
@@ -178,7 +183,7 @@ class NixAutoModuleDirective(SphinxDirective):
                 result += OptionDirective(
                     "nix:option",
                     arguments=[in_between_option],
-                    options=short_toc_name,
+                    options=directive_options,
                     content=StringList(),
                     lineno=self.lineno,
                     content_offset=self.content_offset,
@@ -190,7 +195,7 @@ class NixAutoModuleDirective(SphinxDirective):
             result += NixAutoOptionDirective(
                 "",
                 arguments=[option],
-                options=short_toc_name if option != module else {},
+                options=directive_options,
                 content=StringList(),
                 lineno=self.lineno,
                 content_offset=self.content_offset,

@@ -38,7 +38,6 @@ class OptionDirective(ObjectDescription):
         "type": directives.unchanged,
         "read-only": directives.flag,
         "declaration": directives.unchanged,
-        "short-toc-name": directives.flag,
     }
 
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
@@ -92,8 +91,6 @@ class OptionDirective(ObjectDescription):
                 refuri=uri,
             )
             signode += onlynode
-
-        signode["short-toc-name"] = "short-toc-name" in self.options
 
         return fullname
 
@@ -150,9 +147,6 @@ class OptionDirective(ObjectDescription):
     def _toc_entry_name(self, signode: desc_signature) -> str:
         if not signode.get("_toc_parts"):
             return ""
-
-        if signode["short-toc-name"]:
-            return signode["name"]
 
         return signode["fullname"]
 

@@ -41,6 +41,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 intersphinx_mapping = {
     "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+    "myst": ("https://myst-parser.readthedocs.io/en/latest/", None),
+    "epnix": ("https://epics-extensions.github.io/EPNix/dev/", None),
 }
 
 # -- Options for HTML output -------------------------------------------------
@@ -95,3 +97,14 @@ def nixdomain_linkcode_resolve(path: str) -> str:
 # https://myst-parser.readthedocs.io/en/latest/configuration.html
 
 myst_enable_extensions = ["colon_fence", "fieldlist"]
+
+myst_url_schemes = {
+    "http": None,
+    "https": None,
+    "mailto": None,
+    "source": {
+        "url": f"{source_repository}/blob/{revision}/{{{{path}}}}",
+        "title": "{{path}}",
+        "classes": ["github"],
+    },
+}
