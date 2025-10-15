@@ -158,6 +158,30 @@ class NixDomain(Domain):
         for entity in self.get_entities():
             yield entity.to_tuple()
 
+    def resolve_any_xref(
+        self,
+        env: BuildEnvironment,
+        fromdocname: str,
+        builder: Builder,
+        target: str,
+        node: pending_xref,
+        contnode: Element,
+    ) -> list[tuple[str, Element]]:
+        results: list[tuple[str, Element]] = []
+        for objtype in self.object_types:
+            result = self.resolve_xref(
+                env,
+                fromdocname,
+                builder,
+                objtype,
+                target,
+                node,
+                contnode,
+            )
+            if result:
+                results.append((f"nix:{self.role_for_objtype(objtype)}", result))
+        return results
+
     def resolve_xref(
         self,
         _env: BuildEnvironment,
