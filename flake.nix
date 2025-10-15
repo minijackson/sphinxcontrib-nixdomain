@@ -109,5 +109,10 @@
           })
         ];
       };
+
+      templates.example = {
+        path = ./templates/example;
+        description = "An example project using sphinxcontrib-nixdomain";
+      };
     };
 }
