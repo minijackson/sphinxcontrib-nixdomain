@@ -11,7 +11,7 @@ from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
 
 from . import _data as autodata
-from ._utils import split_attr_path
+from ._utils import is_part_of_scope, split_attr_path
 from .library import FunctionDirective
 
 if TYPE_CHECKING:
@@ -86,16 +86,24 @@ class NixAutoLibraryDirective(SphinxDirective):
         "no-index-entry": directives.flag,
         "no-contents-entry": directives.flag,
         "no-typesetting": directives.flag,
+        "no-recursive": directives.flag,
     }
 
     def run(self) -> list[nodes.Node]:
         scope = self.arguments[0] if len(self.arguments) >= 1 else ""
         scope_loc = split_attr_path(scope)
 
-        def _is_part_of_scope(fun: autodata.Function) -> bool:
-            return fun.loc[: len(scope_loc)] == scope_loc
+        # If "no-recursive" is given, `self.options["no-recursive"]` is `None`,
+        # so its bool representation is `False`.
+        #
+        # We pop it to pass the rest of the options to the `autofunction` directive.
+        recursive = bool(self.options.pop("no-recursive", True))
 
-        funcs = [name for name, pkg in autodata.functions() if _is_part_of_scope(pkg)]
+        funcs = [
+            name
+            for name, fun in autodata.functions()
+            if is_part_of_scope(scope_loc, fun.loc, recursive=recursive)
+        ]
 
         if funcs == []:
             logger.warning(

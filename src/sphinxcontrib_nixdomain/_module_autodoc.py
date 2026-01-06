@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import TYPE_CHECKING, Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -13,19 +13,22 @@ from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
 
 from . import _data as autodata
-from ._utils import option_key_fun, skipped_options_levels, split_attr_path
+from ._utils import (
+    is_part_of_scope,
+    option_key_fun,
+    skipped_options_levels,
+    split_attr_path,
+)
 from .module import OptionDirective
 
 if TYPE_CHECKING:
     from collections.abc import Callable
     from typing import Any
 
-    from ._domain import NixDomain
-
 
 logger = logging.getLogger(__name__)
 
-# TODO: internal, visible, read_only, related_packages, configurable links to source
+# TODO: related_packages
 
 
 class NixAutoOptionDirective(SphinxDirective):
@@ -134,16 +137,19 @@ class NixAutoModuleDirective(SphinxDirective):
     }
 
     def run(self) -> list[nodes.Node]:
-        nix = cast("NixDomain", self.env.get_domain("nix"))
-
         module = self.arguments[0]
         module_loc = split_attr_path(module)
 
-        def _is_part_of_module(option: autodata.Option) -> bool:
-            return option.loc[: len(module_loc)] == module_loc
+        # If "no-recursive" is given, `self.options["no-recursive"]` is `None`,
+        # so its bool representation is `False`.
+        #
+        # We pop it to pass the rest of the options to the `autooption` directive.
+        recursive = bool(self.options.pop("no-recursive", True))
 
         options = [
-            name for name, option in autodata.options() if _is_part_of_module(option)
+            name
+            for name, option in autodata.options()
+            if is_part_of_scope(module_loc, option.loc, recursive=recursive)
         ]
 
         if options == []:

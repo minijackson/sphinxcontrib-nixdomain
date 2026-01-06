@@ -12,7 +12,7 @@ from sphinx.util.docutils import SphinxDirective
 from sphinx.util.template import SphinxTemplateLoader
 
 from . import _data as autodata
-from ._utils import split_attr_path
+from ._utils import is_part_of_scope, split_attr_path
 from .package import PackageDirective
 
 logger = logging.getLogger(__name__)
@@ -90,16 +90,24 @@ class NixAutoPackagesDirective(SphinxDirective):
         "no-index-entry": directives.flag,
         "no-contents-entry": directives.flag,
         "no-typesetting": directives.flag,
+        "no-recursive": directives.flag,
     }
 
     def run(self) -> list[nodes.Node]:
         scope = self.arguments[0] if len(self.arguments) >= 1 else ""
         scope_loc = split_attr_path(scope)
 
-        def _is_part_of_scope(pkg: autodata.Package) -> bool:
-            return pkg.loc[: len(scope_loc)] == scope_loc
+        # If "no-recursive" is given, `self.options["no-recursive"]` is `None`,
+        # so its bool representation is `False`.
+        #
+        # We pop it to pass the rest of the options to the `autopackage` directive.
+        recursive = bool(self.options.pop("no-recursive", True))
 
-        pkgs = [name for name, pkg in autodata.packages() if _is_part_of_scope(pkg)]
+        pkgs = [
+            name
+            for name, pkg in autodata.packages()
+            if is_part_of_scope(scope_loc, pkg.loc, recursive=recursive)
+        ]
 
         if pkgs == []:
             logger.warning(

@@ -51,6 +51,13 @@ def split_attr_path(path: str) -> list[str]:
     return re.findall(ATTRIBUTE, path)
 
 
+def is_part_of_scope(scope_loc: list[str], loc: list[str], *, recursive: bool) -> bool:
+    if not recursive and len(loc) != len(scope_loc) + 1:
+        return False
+
+    return loc[: len(scope_loc)] == scope_loc
+
+
 def skipped_options_levels(
     previous_loc: list[str],
     next_loc: list[str],

@@ -1,4 +1,9 @@
-from sphinxcontrib_nixdomain._utils import option_key_fun, option_lt, split_attr_path
+from sphinxcontrib_nixdomain._utils import (
+    is_part_of_scope,
+    option_key_fun,
+    option_lt,
+    split_attr_path,
+)
 
 # ruff: noqa: D100, D103, S101
 
@@ -37,7 +42,7 @@ def test_options_sorting_key_fun() -> None:
     ]
 
 
-def test_options_path_split() -> None:
+def test_attr_path_split() -> None:
     assert split_attr_path(
         'services.javaThingy.<name>.settings."com.package/config"',
     ) == [
@@ -57,3 +62,15 @@ def test_options_path_split() -> None:
         '""',
         "enable",
     ]
+
+
+def test_part_of_scope() -> None:
+    assert is_part_of_scope([], ["a"], recursive=True)
+    assert is_part_of_scope([], ["a"], recursive=False)
+    assert is_part_of_scope([], ["a", "b"], recursive=True)
+    assert not is_part_of_scope([], ["a", "b"], recursive=False)
+
+    assert is_part_of_scope(["a"], ["a", "b"], recursive=True)
+    assert is_part_of_scope(["a"], ["a", "b"], recursive=False)
+    assert is_part_of_scope(["a"], ["a", "b", "c"], recursive=True)
+    assert not is_part_of_scope(["a"], ["a", "b", "c"], recursive=False)

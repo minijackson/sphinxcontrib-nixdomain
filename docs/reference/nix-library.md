@@ -3,9 +3,10 @@
 ```{default-domain} nix
 ```
 
-## Main function
+## Main functions
 
-```{autofunction} nixdomainLib.documentObjects
+```{autolibrary} nixdomainLib
+:no-recursive:
 ```
 
 ## Customize options
