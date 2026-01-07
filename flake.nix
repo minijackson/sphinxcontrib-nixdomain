@@ -46,7 +46,7 @@
 
           env = {
             REVISION = self.rev or "main";
-            NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleOptionsJson;
+            NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleObjectsJson;
           };
         };
 
@@ -62,7 +62,7 @@
         inherit (pkgs.python3.pkgs) sphinxcontrib-nixdomain;
         default = self.packages.x86_64-linux.sphinxcontrib-nixdomain;
 
-        exampleOptionsJson =
+        exampleObjectsJson =
           let
             inherit (nixpkgs) lib;
 
@@ -109,7 +109,7 @@
 
                 env = {
                   REVISION = self.rev or "main";
-                  NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleOptionsJson;
+                  NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleObjectsJson;
                 };
               });
           })
