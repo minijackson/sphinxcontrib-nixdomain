@@ -5,6 +5,7 @@
 
 import os
 import sys
+from datetime import date
 from urllib.parse import urlsplit
 
 from sphinx.util import logging
@@ -17,11 +18,17 @@ logger = logging.getLogger(__name__)
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "sphinxcontrib-nixdomain"
-copyright = "2024, Minijackson"
 author = "Minijackson"
 release = "0.1.0"
 
 source_repository = "https://github.com/minijackson/sphinxcontrib-nixdomain"
+
+source_date = date.today()
+if date_ts := os.environ.get("SOURCE_DATE_EPOCH"):
+    source_date = date.fromtimestamp(float(date_ts))
+
+today = source_date.isoformat()
+copyright = f"2023-{source_date.year}, Minijackson"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

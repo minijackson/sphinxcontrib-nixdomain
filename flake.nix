@@ -47,6 +47,7 @@
           env = {
             REVISION = self.rev or "main";
             NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleObjectsJson;
+            SOURCE_DATE_EPOCH = self.sourceInfo.lastModified;
           };
         };
 
@@ -110,6 +111,7 @@
                 env = {
                   REVISION = self.rev or "main";
                   NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleObjectsJson;
+                  SOURCE_DATE_EPOCH = self.sourceInfo.lastModified;
                 };
               });
           })
