@@ -8,9 +8,10 @@ and doesn't have a proper release yet.
 `sphinxcontrib-nixdomain` is a {external+sphinx:doc}`Sphinx <index>` extension
 providing a {external+sphinx:term}`Sphinx domain <domain>` for Nix.
 
-The goal of this project is to be able to document Nix libraries,
-NixOS-like module options,
+The goal of this project is to be able to document
+NixOS module options,
 Nix packages,
+Nix libraries,
 using the Sphinx documentation ecosystem.
 
 :::{important}
