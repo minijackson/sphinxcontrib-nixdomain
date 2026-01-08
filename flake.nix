@@ -24,33 +24,6 @@
       };
     in
     {
-      devShells.x86_64-linux.default =
-        let
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          python = pkgs.python3;
-
-          arg = project.renderers.withPackages {
-            inherit python;
-            extras = [
-              "docs"
-              "tests"
-            ];
-          };
-          pythonEnv = python.withPackages arg;
-        in
-        pkgs.mkShell {
-          packages = [
-            pythonEnv
-            pkgs.hatch
-          ];
-
-          env = {
-            REVISION = self.rev or "main";
-            NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleObjectsJson;
-            SOURCE_DATE_EPOCH = self.sourceInfo.lastModified;
-          };
-        };
-
       lib = nixpkgs.lib.fix (
         nixdomainLib:
         import ./lib {

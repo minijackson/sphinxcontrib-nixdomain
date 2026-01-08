@@ -20,7 +20,11 @@ logger = logging.getLogger(__name__)
 
 project = "sphinxcontrib-nixdomain"
 author = "Minijackson"
-release = importlib.metadata.version("sphinxcontrib-nixdomain")
+# If inside the nix shell, "version" is parsed from the `pyproject.toml`
+# even if the package is not properly installed
+release = os.environ.get("version") or importlib.metadata.version(
+    "sphinxcontrib-nixdomain"
+)
 
 source_repository = "https://github.com/minijackson/sphinxcontrib-nixdomain"
 
