@@ -3,6 +3,7 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import importlib.metadata
 import os
 import sys
 from datetime import date
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 project = "sphinxcontrib-nixdomain"
 author = "Minijackson"
-release = "0.1.0"
+release = importlib.metadata.version("sphinxcontrib-nixdomain")
 
 source_repository = "https://github.com/minijackson/sphinxcontrib-nixdomain"
 
