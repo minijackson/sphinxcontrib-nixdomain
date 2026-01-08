@@ -128,7 +128,8 @@ class NixAutoOptionDirective(SphinxDirective):
 
 class NixAutoModuleDirective(SphinxDirective):
     has_content = False
-    required_arguments = 1
+    required_arguments = 0
+    optional_arguments = 1
     option_spec: ClassVar[dict[str, Callable[[str], Any]]] = {
         "no-index": directives.flag,
         "no-index-entry": directives.flag,
@@ -137,7 +138,7 @@ class NixAutoModuleDirective(SphinxDirective):
     }
 
     def run(self) -> list[nodes.Node]:
-        module = self.arguments[0]
+        module = self.arguments[0] if len(self.arguments) >= 1 else ""
         module_loc = split_attr_path(module)
 
         # If "no-recursive" is given, `self.options["no-recursive"]` is `None`,
@@ -171,7 +172,7 @@ class NixAutoModuleDirective(SphinxDirective):
         in_between_directive_options["no-typesetting"] = True
         in_between_directive_options["no-index-entry"] = True
 
-        if not autodata.has_option(module):
+        if module != "" and not autodata.has_option(module):
             result += OptionDirective(
                 "nix:option",
                 arguments=[module],

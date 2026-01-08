@@ -5,9 +5,11 @@
 Sphinx directives for automatically documenting NixOS options,
 or any option in a NixOS-like module system.
 
-::::::{rst:directive} .. nix:automodule:: <module>
+::::::{rst:directive} .. nix:automodule:: [module]
 
 Render all options documentation in the module `module`, recursively.
+If no `module` is given,
+render all modules.
 
 For an example usage, see the <project:#module-example> example.
 
