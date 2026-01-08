@@ -1,6 +1,10 @@
 result
 result-*
 
+# the lockfile will be ignored when using the Nix package,
+# so let's not set expectations
+uv.lock
+
 #--------------------------------------------------#
 # The following was generated with gitignore.nvim: #
 #--------------------------------------------------#
