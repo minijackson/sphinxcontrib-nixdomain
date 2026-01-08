@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      non-breaking-changes:
+        update-types: [minor, patch]
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      non-breaking-changes:
+        update-types: [minor, patch]
+    cooldown:
+      default-days: 7
