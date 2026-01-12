@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+
+- All documentation URLs now point to the ReadTheDocs documentation website.
+
   [Unreleased]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.1...main
 
 ## [0.1.1] --- 2026-01-12

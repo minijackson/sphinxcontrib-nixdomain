@@ -34,7 +34,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 myst_enable_extensions = ["colon_fence", "fieldlist"]
 
 # -- Options for the Nix domain ----------------------------------------------
-# https://minijackson.github.io/sphinxcontrib-nixdomain/reference/configuration.html
+# https://sphinxcontrib-nixdomain.readthedocs.io/en/stable/reference/configuration.html
 
 
 def nixdomain_linkcode_resolve(path: str) -> str:

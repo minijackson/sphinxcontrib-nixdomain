@@ -61,8 +61,6 @@ intersphinx_mapping = {
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_static_path = ["_static"]
-html_baseurl = "https://minijackson.github.io/sphinxcontrib-nixdomain/"
-
 
 html_css_files = ["field-lists.css"]
 

@@ -50,7 +50,7 @@ in the {confval}`intersphinx_mapping` configuration:
 :caption: {file}`conf.py` --- Adding the external documentation to Intersphinx
 
 intersphinx_mapping = {
-    "nixdomain": ("https://minijackson.github.io/sphinxcontrib-nixdomain/", None),
+    "nixdomain": ("https://sphinxcontrib-nixdomain.readthedocs.io/en/stable/", None),
     # Another example project using `sphinxcontrib-nixdomain`
     "epnix": ("https://epics-extensions.github.io/EPNix/dev/", None),
 }

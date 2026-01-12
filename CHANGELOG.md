@@ -1,3 +1,3 @@
 # Changelog
 
-See the [documentation changelog](https://minijackson.github.io/sphinxcontrib-nixdomain/reference/changelog.html).
+See the [documentation changelog](https://sphinxcontrib-nixdomain.readthedocs.io/en/stable/reference/changelog.html).

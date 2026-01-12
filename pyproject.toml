@@ -39,7 +39,8 @@ docs = ["furo", "myst-parser", "sphinx-design"]
 tests = ["pytest"]
 
 [project.urls]
-Documentation = "https://github.com/minijackson/sphinxcontrib-nixdomain#readme"
+Documentation = "https://sphinxcontrib-nixdomain.readthedocs.io/en/stable/index.html"
+Changelog = "https://sphinxcontrib-nixdomain.readthedocs.io/en/stable/reference/changelog.html"
 Issues = "https://github.com/minijackson/sphinxcontrib-nixdomain/issues"
 Source = "https://github.com/minijackson/sphinxcontrib-nixdomain"
 

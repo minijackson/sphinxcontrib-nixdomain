@@ -22,7 +22,7 @@ using the Sphinx documentation ecosystem.
 
 See the [`sphinxcontrib-nixdomain` documentation] for installation and usage.
 
-  [`sphinxcontrib-nixdomain` documentation]: https://minijackson.github.io/sphinxcontrib-nixdomain/
+  [`sphinxcontrib-nixdomain` documentation]: https://sphinxcontrib-nixdomain.readthedocs.io/en/stable/index.html
 
 ## License
 
