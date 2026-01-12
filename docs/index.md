@@ -2,7 +2,7 @@
 
 :::{warning}
 This library is under active development
-and doesn't have a proper release yet.
+and doesn't have a stable release yet.
 :::
 
 `sphinxcontrib-nixdomain` is a {external+sphinx:doc}`Sphinx <index>` extension
@@ -47,6 +47,7 @@ reference/auto-directives
 reference/roles
 reference/nix-library
 reference/manual
+reference/changelog
 ```
 
 ```{toctree}
