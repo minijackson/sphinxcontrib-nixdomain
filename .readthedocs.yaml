@@ -17,6 +17,10 @@ build:
       # was configured in the ReadTheDocs project settings
       - ./nix-portable nix store cat $(readlink result) > /tmp/nix-objects.json
 
+formats:
+  - epub
+  - pdf
+
 python:
   install:
     - method: pip
