@@ -2,7 +2,7 @@
 
 {
   /**
-    Document the given objects.
+    I changed something, yay!
 
     :type: `{ sources; options; packages; library; } -> store path`
     :param attrSet of strings sources:
