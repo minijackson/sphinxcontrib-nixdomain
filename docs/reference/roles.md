@@ -14,12 +14,12 @@ Refer to any object defined by `sphinxcontrib-nixdomain`.
 For example:
 
 ``` markdown
-See the {nix:obj}`services.foo.enable` object.
+See the {nix:obj}`services.autobar.enable` object.
 ```
 
 Is rendered as:
 
-> See the {nix:obj}`services.foo.enable` object.
+> See the {nix:obj}`services.autobar.enable` object.
 :::
 
 :::{rst:role} nix:option
@@ -28,12 +28,12 @@ Refer to an option from the NixOS module system.
 For example:
 
 ``` markdown
-See the {nix:option}`services.foo.enable` option.
+See the {nix:option}`services.autobar.enable` option.
 ```
 
 Is rendered as:
 
-> See the {nix:option}`services.foo.enable` option.
+> See the {nix:option}`services.autobar.enable` option.
 :::
 
 :::{rst:role} nix:pkg

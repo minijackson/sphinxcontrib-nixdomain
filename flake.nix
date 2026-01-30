@@ -92,6 +92,10 @@
         ];
       };
 
+      checks.x86_64-linux = {
+        test-root = pkgs.callPackage ./tests/root/package.nix { };
+      };
+
       templates.example = {
         path = ./templates/example;
         description = "An example project using sphinxcontrib-nixdomain";

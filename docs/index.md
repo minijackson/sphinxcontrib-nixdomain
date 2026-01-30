@@ -50,13 +50,6 @@ reference/manual
 reference/changelog
 ```
 
-```{toctree}
-:caption: Tests:
-:hidden:
-
-tests/manual
-```
-
 # Indices and tables
 
 * {ref}`genindex`

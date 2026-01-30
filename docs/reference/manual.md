@@ -6,10 +6,6 @@ by using the following directives.
 Use these directives when generating from Nix code isn't possible
 or if you want to develop a custom documentation generator.
 
-:::{seealso}
-{doc}`../tests/manual` for more manual usage examples.
-:::
-
 ::::::{rst:directive} .. nix:option:: name
 Describes a option from the NixOS module system.
 
