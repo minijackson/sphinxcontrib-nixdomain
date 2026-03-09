@@ -12,9 +12,9 @@ from ._library_autodoc import NixAutoFunctionDirective, NixAutoLibraryDirective
 from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
 from ._package_autodoc import NixAutoPackageDirective, NixAutoPackagesDirective
 from ._utils import EntityType, option_lt, split_attr_path
-from .library import FunctionDirective, LibraryIndex
-from .module import OptionDirective, OptionsIndex
-from .package import PackageDirective
+from .library import FunctionDirective, LibraryIndex, _function_target
+from .module import OptionDirective, OptionsIndex, _option_target
+from .package import PackageDirective, _package_target
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -268,7 +268,7 @@ class NixDomain(Domain):
         _arguments: dict[str, str],
     ) -> None:
         """Add a new function to the domain."""
-        anchor = f"nix-function-{path}"
+        anchor = _function_target(path)
 
         self.data["functions"].append(
             RefEntity(path, path, EntityType.FUNCTION, self.env.docname, anchor, 0),
@@ -276,7 +276,7 @@ class NixDomain(Domain):
 
     def add_option(self, path: str, _options: dict[str, str]) -> None:
         """Add a new module option to the domain."""
-        anchor = f"nix-option-{path}"
+        anchor = _option_target(path)
 
         self.data["options"].append(
             RefEntity(path, path, EntityType.OPTION, self.env.docname, anchor, 0),
@@ -284,7 +284,7 @@ class NixDomain(Domain):
 
     def add_package(self, path: str, _options: dict[str, str]) -> None:
         """Add a new module option to the domain."""
-        anchor = f"nix-package-{path}"
+        anchor = _package_target(path)
 
         self.data["packages"].append(
             RefEntity(path, path, EntityType.PACKAGE, self.env.docname, anchor, 0),

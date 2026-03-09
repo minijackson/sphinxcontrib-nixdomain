@@ -6,6 +6,7 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 from docutils import nodes
+from docutils.nodes import make_id
 from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
@@ -152,7 +153,7 @@ class FunctionDirective(ObjectDescription):
 
 def _function_target(fullname: str) -> str:
     """Return a target for referencing a function."""
-    return f"nix-function-{fullname}"
+    return make_id(f"nix-function-{fullname}")
 
 
 class LibraryIndex(Index):
