@@ -103,7 +103,7 @@
       nixdocInvocation =
         file: category:
         addContext (
-          lib.cli.toGNUCommandLineShell { } {
+          lib.cli.toCommandLineShellGNU { } {
             inherit file category;
             json-output = true;
             description = "";
