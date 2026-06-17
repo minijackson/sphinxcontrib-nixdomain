@@ -4,7 +4,6 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import BeforeValidator, ConfigDict, Field, model_validator
-from sphinx._cli.util.colour import bold
 from sphinx.application import Sphinx
 from sphinx.config import Config
 from sphinx.util import logging
@@ -113,7 +112,7 @@ _OBJECTS: Objects = Objects()
 
 def load_object_files(_app: Sphinx, config: Config) -> None:
     for file in config.nixdomain_objects:
-        logger.info(bold("loading Nix objects in %s... "), file, nonl=True)
+        logger.info("loading Nix objects in %s... ", file, nonl=True, color="bold")
         global _OBJECTS
         _OBJECTS = Objects.model_validate_json(Path(file).read_text())
         logger.info(
