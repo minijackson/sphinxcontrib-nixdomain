@@ -19,7 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed a crash if the {envvar}`NIXDOMAIN_OBJECTS` environment variable wasn't defined.
 
-  [Unreleased]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.2...main
+  [Unreleased]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.3...main
+
+## [0.1.3] --- 2026-03-09
+
+### Fixed
+
+- Quoted attributes / options no longer cause issues with HTML anchors.
+
+  [0.1.3]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.2...v0.1.3
 
 ## [0.1.2] --- 2026-01-12
 
