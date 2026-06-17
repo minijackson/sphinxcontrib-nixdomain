@@ -19,7 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed a crash if the {envvar}`NIXDOMAIN_OBJECTS` environment variable wasn't defined.
 
-  [Unreleased]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.3...main
+  [Unreleased]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.4...main
+
+## [0.1.4] --- 2026-03-09
+
+### Fixed
+
+- Don't use the deprecated `lib.cli.toGNUCommandLineShell` Nixpkgs function.
+
+  [0.1.4]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.3...v0.1.4
 
 ## [0.1.3] --- 2026-03-09
 
