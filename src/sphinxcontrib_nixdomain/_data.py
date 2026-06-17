@@ -108,7 +108,7 @@ class Objects(BaseModel):
     library: dict[str, Function] = {}
 
 
-_OBJECTS: Objects
+_OBJECTS: Objects = Objects()
 
 
 def load_object_files(_app: Sphinx, config: Config) -> None:
