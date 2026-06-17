@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- This project now requires Sphinx ≥ 7.4.0
+
 ### Fixed
 
 - Fixed a crash if the {envvar}`NIXDOMAIN_OBJECTS` environment variable wasn't defined.
