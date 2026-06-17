@@ -289,3 +289,7 @@ class NixDomain(Domain):
         self.data["packages"].append(
             RefEntity(path, path, EntityType.PACKAGE, self.env.docname, anchor, 0),
         )
+
+    def merge_domaindata(self, docnames: Set[str], otherdata: dict[str, Any]) -> None:
+        for key, values in otherdata.items():
+            self.data[key] += values

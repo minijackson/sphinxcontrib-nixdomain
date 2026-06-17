@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Parallel Sphinx builds are now supported.
+
 ### Changed
 
 - This project now requires Sphinx ≥ 7.4.0
