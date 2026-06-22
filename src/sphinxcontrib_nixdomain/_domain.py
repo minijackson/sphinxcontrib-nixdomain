@@ -94,7 +94,20 @@ class NixXRefRole(XRefRole):
     ) -> tuple[str, str]:
         refnode["nix:option"] = _last(env.ref_context.get("nix:option", []), "")
         refnode["nix:function"] = _last(env.ref_context.get("nix:function", []), "")
-        return super().process_link(env, refnode, has_explicit_title, title, target)
+
+        title, target = super().process_link(
+            env,
+            refnode,
+            has_explicit_title,
+            title,
+            target,
+        )
+
+        if not has_explicit_title and title[0:1] == "~":
+            title_attrs = split_attr_path(title[1:])
+            title = title_attrs[-1]
+
+        return title, target
 
 
 class NixDomain(Domain):

@@ -31,6 +31,31 @@ Is rendered as:
 >
 > You might also want to examine {nix:func}`exampleLib.myFunc`.
 
+(cross-ref-modifiers)=
+## Cross-reference modifiers
+
+Like for other builtin Sphinx domains,
+you can use the `~` modifier
+to only keep the last element
+in the output:
+
+``` markdown
+See the {nix:option}`~services.autobar.package` option,
+which is {nix:pkg}`~scope."special name"` by default.
+
+You might also want to examine {nix:func}`~exampleLib.myFunc`.
+```
+
+Is rendered as:
+
+> See the {nix:option}`~services.autobar.package` option,
+> which is {nix:pkg}`~scope."special name"` by default.
+>
+> You might also want to examine {nix:func}`~exampleLib.myFunc`.
+
+For more information and other modifiers,
+see Sphinx's {external+sphinx:ref}`Cross-references syntax <xref-syntax>`.
+
 ## Cross-referencing external Nix objects
 
 You can also reference Nix objects from any external documentation

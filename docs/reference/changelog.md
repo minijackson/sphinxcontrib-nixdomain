@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added support for the `~` cross-reference modifier.
+  See {ref}`cross-ref-modifiers`.
+
 ### Changed
 
 - This plugin now requires Python 3.12+.
