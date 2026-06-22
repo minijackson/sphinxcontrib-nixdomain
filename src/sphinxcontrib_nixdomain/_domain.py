@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Any, ClassVar, TypeVar, override
 
-from sphinx.domains import Domain, ObjType
+from sphinx.domains import Domain, Index, ObjType
 from sphinx.roles import XRefRole
 from sphinx.util import logging
 from sphinx.util.nodes import make_refnode
@@ -18,11 +18,14 @@ from .package import PackageDirective, _package_target
 
 if TYPE_CHECKING:
     from collections.abc import Generator
+    from collections.abc import Set as AbstractSet
 
     from docutils.nodes import Element
+    from docutils.parsers.rst import Directive
     from sphinx.addnodes import pending_xref
     from sphinx.builders import Builder
     from sphinx.environment import BuildEnvironment
+    from sphinx.util.typing import RoleFunction
 
 
 logger = logging.getLogger(__name__)
@@ -80,6 +83,7 @@ def _last(li: list[T], default: T = None) -> T:
 
 
 class NixXRefRole(XRefRole):
+    @override
     def process_link(
         self,
         env: BuildEnvironment,
@@ -97,20 +101,20 @@ class NixDomain(Domain):
     name = "nix"
     label = "Nix"
 
-    object_types: dict[str, ObjType] = {  # noqa: RUF012
+    object_types: ClassVar[dict[str, ObjType]] = {
         "option": ObjType("option", "option", "obj"),
         "function": ObjType("function", "func", "bind", "obj"),
         "package": ObjType("package", "pkg", "bind", "obj"),
     }
 
-    roles = {  # noqa: RUF012
+    roles: ClassVar[dict[str, RoleFunction | XRefRole]] = {
         "bind": NixXRefRole(warn_dangling=True),
         "func": NixXRefRole(warn_dangling=True),
         "option": NixXRefRole(warn_dangling=True),
         "pkg": NixXRefRole(warn_dangling=True),
         "obj": NixXRefRole(warn_dangling=True),
     }
-    directives = {  # noqa: RUF012
+    directives: ClassVar[dict[str, type[Directive]]] = {
         "autolibrary": NixAutoLibraryDirective,
         "autofunction": NixAutoFunctionDirective,
         "automodule": NixAutoModuleDirective,
@@ -121,11 +125,11 @@ class NixDomain(Domain):
         "option": OptionDirective,
         "package": PackageDirective,
     }
-    indices = [  # noqa: RUF012
+    indices: ClassVar[list[type[Index]]] = [
         LibraryIndex,
         OptionsIndex,
     ]
-    initial_data = {  # noqa: RUF012
+    initial_data: ClassVar[dict[str, Any]] = {
         "functions": [],
         "options": [],
         "packages": [],
@@ -150,6 +154,7 @@ class NixDomain(Domain):
         yield from self.get_packages()
         yield from self.get_functions()
 
+    @override
     def get_objects(self) -> Generator[object_data]:
         """Get all entities in this domain.
 
@@ -158,6 +163,7 @@ class NixDomain(Domain):
         for entity in self.get_entities():
             yield entity.to_tuple()
 
+    @override
     def resolve_any_xref(
         self,
         env: BuildEnvironment,
@@ -182,6 +188,7 @@ class NixDomain(Domain):
                 results.append((f"nix:{self.role_for_objtype(objtype)}", result))
         return results
 
+    @override
     def resolve_xref(
         self,
         _env: BuildEnvironment,
@@ -290,6 +297,7 @@ class NixDomain(Domain):
             RefEntity(path, path, EntityType.PACKAGE, self.env.docname, anchor, 0),
         )
 
-    def merge_domaindata(self, docnames: Set[str], otherdata: dict[str, Any]) -> None:
+    @override
+    def merge_domaindata(self, docnames: AbstractSet[str], otherdata: dict[str, Any]) -> None:
         for key, values in otherdata.items():
             self.data[key] += values

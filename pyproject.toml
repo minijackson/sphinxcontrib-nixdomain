@@ -7,7 +7,7 @@ name = "sphinxcontrib-nixdomain"
 version = "0.1.6.dev1"
 description = 'Nix domain and autodoc for Sphinx'
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = "EUPL-1.2"
 keywords = ["sphinx", "nix"]
 authors = [{ name = "Minijackson", email = "minijackson@riseup.net" }]
@@ -20,8 +20,6 @@ classifiers = [
   "License :: OSI Approved",
   "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",

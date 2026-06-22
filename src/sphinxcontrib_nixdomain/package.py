@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast, override
 
 from docutils import nodes
 from docutils.nodes import make_id
@@ -17,7 +17,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from sphinx.addnodes import desc_signature
-    from sphinx.directives import ObjDescT
 
     from . import NixDomain
 
@@ -48,6 +47,7 @@ class PackageDirective(ObjectDescription):
         ),
     ]
 
+    @override
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the option given its signature."""
         signode["fullname"] = fullname = sig
@@ -78,37 +78,40 @@ class PackageDirective(ObjectDescription):
 
         return fullname
 
+    @override
     def add_target_and_index(
         self,
-        fullname: str,
-        _sig: str,
+        name: str,
+        sig: str,
         signode: desc_signature,
     ) -> None:
         """Add the given option to the index, and create a target."""
-        signode["ids"].append(_package_target(fullname))
+        signode["ids"].append(_package_target(name))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_package(fullname, {})
+        nix.add_package(name, {})
 
         if "no-index-entry" not in self.options:
             self.indexnode["entries"].append(
                 (
                     "single",
-                    f"{fullname} (Nix package)",
-                    _package_target(fullname),
+                    f"{name} (Nix package)",
+                    _package_target(name),
                     "",
                     None,
                 ),
             )
 
-    def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
-        return tuple(signode["path-parts"])
+    @override
+    def _object_hierarchy_parts(self, sig_node: desc_signature) -> tuple[str]:
+        return tuple(sig_node["path-parts"])
 
-    def _toc_entry_name(self, signode: desc_signature) -> str:
-        if not signode.get("_toc_parts"):
+    @override
+    def _toc_entry_name(self, sig_node: desc_signature) -> str:
+        if not sig_node.get("_toc_parts"):
             return ""
 
-        return signode["fullname"]
+        return sig_node["fullname"]
 
 
 def _package_target(fullname: str) -> str:

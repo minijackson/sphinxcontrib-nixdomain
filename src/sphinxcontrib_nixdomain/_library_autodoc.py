@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, override
 
 from docutils.parsers.rst import directives
 from docutils.statemachine import StringList, string2lines
@@ -20,8 +20,6 @@ if TYPE_CHECKING:
 
     from docutils import nodes
 
-    from ._domain import NixDomain
-
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +34,7 @@ class NixAutoFunctionDirective(SphinxDirective):
         "no-typesetting": directives.flag,
     }
 
+    @override
     def run(self) -> list[nodes.Node]:
         name = self.arguments[0]
 
@@ -89,6 +88,7 @@ class NixAutoLibraryDirective(SphinxDirective):
         "no-recursive": directives.flag,
     }
 
+    @override
     def run(self) -> list[nodes.Node]:
         scope = self.arguments[0] if len(self.arguments) >= 1 else ""
         scope_loc = split_attr_path(scope)

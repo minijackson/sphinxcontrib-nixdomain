@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, override
 
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -41,6 +41,7 @@ class NixAutoOptionDirective(SphinxDirective):
         "no-typesetting": directives.flag,
     }
 
+    @override
     def run(self) -> list[nodes.Node]:
         name = self.arguments[0]
 
@@ -137,6 +138,7 @@ class NixAutoModuleDirective(SphinxDirective):
         "no-typesetting": directives.flag,
     }
 
+    @override
     def run(self) -> list[nodes.Node]:
         module = self.arguments[0] if len(self.arguments) >= 1 else ""
         module_loc = split_attr_path(module)

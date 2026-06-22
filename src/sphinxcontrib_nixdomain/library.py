@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast, override
 
 from docutils import nodes
 from docutils.nodes import make_id
@@ -11,7 +11,7 @@ from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Index, IndexEntry
-from sphinx.util.docfields import Field, GroupedField, TypedField
+from sphinx.util.docfields import Field, TypedField
 
 from ._utils import split_attr_path
 
@@ -19,7 +19,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
 
     from sphinx.addnodes import desc_signature
-    from sphinx.directives import ObjDescT
 
     from . import NixDomain
 
@@ -68,6 +67,7 @@ class FunctionDirective(ObjectDescription):
         ),
     ]
 
+    @override
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the function given its signature."""
         signode["fullname"] = fullname = sig
@@ -98,29 +98,31 @@ class FunctionDirective(ObjectDescription):
 
         return fullname
 
+    @override
     def add_target_and_index(
         self,
-        fullname: str,
-        _sig: str,
+        name: str,
+        sig: str,
         signode: desc_signature,
     ) -> None:
         """Add the given function to the index, and create a target."""
-        signode["ids"].append(_function_target(fullname))
+        signode["ids"].append(_function_target(name))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_function(fullname, {})
+        nix.add_function(name, {})
 
         if "no-index-entry" not in self.options:
             self.indexnode["entries"].append(
                 (
                     "single",
-                    f"{fullname} (Nix function)",
-                    _function_target(fullname),
+                    f"{name} (Nix function)",
+                    _function_target(name),
                     "",
                     None,
                 ),
             )
 
+    @override
     def before_content(self) -> None:
         """Insert content before a function.
 
@@ -130,6 +132,7 @@ class FunctionDirective(ObjectDescription):
         scope = self.env.ref_context.setdefault("nix:function", [])
         scope.append(self.names[-1])
 
+    @override
     def after_content(self) -> None:
         """Insert content after a option.
 
@@ -141,14 +144,16 @@ class FunctionDirective(ObjectDescription):
         else:
             self.env.ref_context.pop("nix:function")
 
-    def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
-        return tuple(signode["path-parts"])
+    @override
+    def _object_hierarchy_parts(self, sig_node: desc_signature) -> tuple[str]:
+        return tuple(sig_node["path-parts"])
 
-    def _toc_entry_name(self, signode: desc_signature) -> str:
-        if not signode.get("_toc_parts"):
+    @override
+    def _toc_entry_name(self, sig_node: desc_signature) -> str:
+        if not sig_node.get("_toc_parts"):
             return ""
 
-        return signode["fullname"]
+        return sig_node["fullname"]
 
 
 def _function_target(fullname: str) -> str:
@@ -165,9 +170,10 @@ class LibraryIndex(Index):
     localname = "Nix Library Index"
     shortname = "library"
 
+    @override
     def generate(
         self,
-        _docnames: Iterable[str] | None = None,
+        docnames: Iterable[str] | None = None,
     ) -> tuple[list[tuple[str, list[IndexEntry]]], bool]:
         """Get entries for the index."""
         content: defaultdict[str, list[IndexEntry]] = defaultdict(list)

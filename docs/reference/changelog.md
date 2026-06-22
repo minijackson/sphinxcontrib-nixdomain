@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- This plugin now requires Python 3.12+.
+
   [Unreleased]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.5...main
 
 ## [0.1.5] --- 2026-06-17

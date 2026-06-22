@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from copy import copy
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any, ClassVar, override
 
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -28,6 +28,7 @@ class NixAutoPackageDirective(SphinxDirective):
         "no-typesetting": directives.flag,
     }
 
+    @override
     def run(self) -> list[nodes.Node]:
         name = self.arguments[0]
 
@@ -93,6 +94,7 @@ class NixAutoPackagesDirective(SphinxDirective):
         "no-recursive": directives.flag,
     }
 
+    @override
     def run(self) -> list[nodes.Node]:
         scope = self.arguments[0] if len(self.arguments) >= 1 else ""
         scope_loc = split_attr_path(scope)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast, override
 
 from docutils import nodes
 from docutils.nodes import make_id
@@ -18,7 +18,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
 
     from sphinx.addnodes import desc_signature
-    from sphinx.directives import ObjDescT
 
     from . import NixDomain
 
@@ -41,6 +40,7 @@ class OptionDirective(ObjectDescription):
         "declaration": directives.unchanged,
     }
 
+    @override
     def handle_signature(self, sig: str, signode: desc_signature) -> str:
         """Print the option given its signature."""
         parent_opts = self.env.ref_context.setdefault("nix:option", [])
@@ -95,29 +95,31 @@ class OptionDirective(ObjectDescription):
 
         return fullname
 
+    @override
     def add_target_and_index(
         self,
-        fullname: str,
-        _sig: str,
+        name: str,
+        sig: str,
         signode: desc_signature,
     ) -> None:
         """Add the given option to the index, and create a target."""
-        signode["ids"].append(_option_target(fullname))
+        signode["ids"].append(_option_target(name))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_option(fullname, {})
+        nix.add_option(name, {})
 
         if "no-index-entry" not in self.options:
             self.indexnode["entries"].append(
                 (
                     "single",
-                    f"{fullname} (Nix option)",
-                    _option_target(fullname),
+                    f"{name} (Nix option)",
+                    _option_target(name),
                     "",
                     None,
                 ),
             )
 
+    @override
     def before_content(self) -> None:
         """Insert content before a option.
 
@@ -127,6 +129,7 @@ class OptionDirective(ObjectDescription):
         options = self.env.ref_context.setdefault("nix:option", [])
         options.append(self.names[-1])
 
+    @override
     def after_content(self) -> None:
         """Insert content after a option.
 
@@ -139,17 +142,19 @@ class OptionDirective(ObjectDescription):
         else:
             self.env.ref_context.pop("nix:option")
 
-    def _object_hierarchy_parts(self, signode: desc_signature) -> tuple[str]:
+    @override
+    def _object_hierarchy_parts(self, sig_node: desc_signature) -> tuple[str]:
         prefix = []
         for part in self.env.ref_context["nix:option"]:
             prefix += split_attr_path(part)
-        return (*prefix, *signode["path-parts"])
+        return (*prefix, *sig_node["path-parts"])
 
-    def _toc_entry_name(self, signode: desc_signature) -> str:
-        if not signode.get("_toc_parts"):
+    @override
+    def _toc_entry_name(self, sig_node: desc_signature) -> str:
+        if not sig_node.get("_toc_parts"):
             return ""
 
-        return signode["fullname"]
+        return sig_node["fullname"]
 
 
 def _option_target(fullname: str) -> str:
@@ -164,9 +169,10 @@ class OptionsIndex(Index):
     localname = "Nix options index"
     shortname = "option"
 
+    @override
     def generate(
         self,
-        _docnames: Iterable[str] | None = None,
+        docnames: Iterable[str] | None = None,
     ) -> tuple[list[tuple[str, list[IndexEntry]]], bool]:
         """Get entries for the index."""
         content: defaultdict[str, list[IndexEntry]] = defaultdict(list)
