@@ -6,24 +6,24 @@ by using the following directives.
 Use these directives when generating from Nix code isn't possible
 or if you want to develop a custom documentation generator.
 
-::::::{rst:directive} .. nix:option:: name
+:::::::::{rst:directive} .. nix:option:: name
 Describes a option from the NixOS module system.
 
-For example:
-
+::::::{admonition} Example
 ``` markdown
 :::{nix:option} service.my-service.enable
 My option description
 :::
 ```
 
-Is rendered as:
+Renders:
 
 > :::{nix:option} service.my-service.enable
 > :no-index:
 >
 > My option description
 > :::
+::::::
 
 :::{rubric} Options
 :::
@@ -49,16 +49,15 @@ to generate a ``[source]`` link.
 
 Other standard domain options are supported,
 see the Sphinx domain {ref}`Basic Markup <basic-domain-markup>` documentation.
-::::::
+:::::::::
 
-::::::{rst:directive} .. nix:package:: name
+:::::::::{rst:directive} .. nix:package:: name
 Describes a Nix package.
 
-Use {ref}`field-lists <rst-field-lists>` after the description
+Use {ref}`field lists <rst-field-lists>` after the description
 to describe the package's metadata
 
-For example:
-
+::::::{admonition} Example
 ``` markdown
 :::{nix:package} myProject.myPackage
 My package description
@@ -68,7 +67,7 @@ My package description
 :::
 ```
 
-Will be rendered as:
+Renders:
 
 > :::{nix:package} myProject.myPackage
 > :no-index:
@@ -78,6 +77,7 @@ Will be rendered as:
 > :version: `0.0.0-rc1`
 > :license: `EUPL-1.2`
 > :::
+::::::
 
 :::{rubric} Options
 :::
@@ -92,16 +92,15 @@ to generate a ``[source]`` link.
 
 Other standard domain options are supported,
 see the Sphinx domain {ref}`Basic Markup <basic-domain-markup>` documentation.
-::::::
+:::::::::
 
-::::::{rst:directive} .. nix:function:: name
+:::::::::{rst:directive} .. nix:function:: name
 Describes a Nix function.
 
 Use {ref}`field-lists <rst-field-lists>` after the description
 to describe function parameter, their types, the return value, etc.
 
-For example:
-
+::::::{admonition} Example
 ``` markdown
 :::{nix:function} lib.myFunction
 My function description
@@ -113,7 +112,7 @@ My function description
 :::
 ```
 
-Will be rendered as:
+Renders:
 
 > :::{nix:function} lib.myFunction
 > :no-index:
@@ -125,6 +124,7 @@ Will be rendered as:
 > :returns: the sum of those two numbers
 > :rtype: int
 > :::
+::::::
 
 :::{rubric} Options
 :::
@@ -139,4 +139,4 @@ to generate a ``[source]`` link.
 
 Other standard domain options are supported,
 see the Sphinx domain {ref}`Basic Markup <basic-domain-markup>` documentation.
-::::::
+:::::::::

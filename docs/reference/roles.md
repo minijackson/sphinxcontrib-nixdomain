@@ -8,58 +8,58 @@ See {doc}`../usage/cross-references`
 for more information.
 :::
 
-:::{rst:role} nix:obj
+::::::{rst:role} nix:obj
 Refer to any object defined by `sphinxcontrib-nixdomain`.
 
-For example:
-
+:::{admonition} Example
 ``` markdown
 See the {nix:obj}`services.autobar.enable` object.
 ```
 
-Is rendered as:
+Renders:
 
 > See the {nix:obj}`services.autobar.enable` object.
 :::
+::::::
 
-:::{rst:role} nix:option
+::::::{rst:role} nix:option
 Refer to an option from the NixOS module system.
 
-For example:
-
+:::{admonition} Example
 ``` markdown
 See the {nix:option}`services.autobar.enable` option.
 ```
 
-Is rendered as:
+Renders:
 
 > See the {nix:option}`services.autobar.enable` option.
 :::
+::::::
 
-:::{rst:role} nix:pkg
+::::::{rst:role} nix:pkg
 Refer to a Nix package.
 
-For example:
-
+:::{admonition} Example
 ``` markdown
 See the {nix:pkg}`hello` package.
 ```
 
-Is rendered as:
+Renders:
 
 > See the {nix:pkg}`hello` package.
 :::
+::::::
 
-:::{rst:role} nix:func
+::::::{rst:role} nix:func
 Refer to a Nix function.
 
-For example:
-
+:::{admonition} Example
 ``` markdown
 See the {nix:func}`exampleLib.myFunc` function.
 ```
 
-Is rendered as:
+Renders:
 
 > See the {nix:func}`exampleLib.myFunc` function.
 :::
+::::::

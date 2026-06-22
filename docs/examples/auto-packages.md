@@ -22,8 +22,7 @@ use the {rst:dir}`nix:autopackages` directive.
 To document every package found,
 don't pass any argument to the directive.
 
-For example:
-
+:::{admonition} Example
 ``````markdown
 ```{default-domain} nix
 ```
@@ -38,14 +37,14 @@ Renders:
 > :no-contents-entry:
 > :no-index-entry:
 > ```
+:::
 
 ### Document a subset
 
 To render only a subset of function,
 pass the desired scope to the directive.
 
-For example:
-
+:::{admonition} Example
 ``````markdown
 ```{default-domain} nix
 ```
@@ -60,6 +59,7 @@ Renders:
 > :no-contents-entry:
 > :no-index-entry:
 > ```
+:::
 
 (package-example)=
 ## Document a single package
@@ -67,8 +67,7 @@ Renders:
 To document a single package,
 use the {rst:dir}`nix:autopackage` directive.
 
-For example:
-
+:::{admonition} Example
 ``````markdown
 ```{default-domain} nix
 ```
@@ -83,3 +82,4 @@ Renders:
 > :no-contents-entry:
 > :no-index-entry:
 > ```
+:::

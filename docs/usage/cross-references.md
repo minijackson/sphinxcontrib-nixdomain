@@ -14,9 +14,7 @@ For a complete list of roles,
 see the {doc}`../reference/roles` reference.
 :::
 
-For example,
-in Markdown:
-
+:::{admonition} Example
 ``` markdown
 See the {nix:option}`services.autobar.package` option,
 which is {nix:pkg}`hello` by default.
@@ -24,12 +22,13 @@ which is {nix:pkg}`hello` by default.
 You might also want to examine {nix:func}`exampleLib.myFunc`.
 ```
 
-Is rendered as:
+Renders:
 
 > See the {nix:option}`services.autobar.package` option,
 > which is {nix:pkg}`hello` by default.
 >
 > You might also want to examine {nix:func}`exampleLib.myFunc`.
+:::
 
 (cross-ref-modifiers)=
 ## Cross-reference modifiers
@@ -37,8 +36,9 @@ Is rendered as:
 Like for other builtin Sphinx domains,
 you can use the `~` modifier
 to only keep the last element
-in the output:
+in the output.
 
+:::{admonition} Example
 ``` markdown
 See the {nix:option}`~services.autobar.package` option,
 which is {nix:pkg}`~scope."special name"` by default.
@@ -46,12 +46,13 @@ which is {nix:pkg}`~scope."special name"` by default.
 You might also want to examine {nix:func}`~exampleLib.myFunc`.
 ```
 
-Is rendered as:
+Renders:
 
 > See the {nix:option}`~services.autobar.package` option,
 > which is {nix:pkg}`~scope."special name"` by default.
 >
 > You might also want to examine {nix:func}`~exampleLib.myFunc`.
+:::
 
 For more information and other modifiers,
 see Sphinx's {external+sphinx:ref}`Cross-references syntax <xref-syntax>`.
@@ -67,8 +68,7 @@ to resolve all cross-references relative to a given module,
 which saves characters to type,
 and may make reading easier.
 
-For example:
-
+:::{admonition} Example
 `````` markdown
 ```{nix:currentmodule} services.autobar
 ```
@@ -82,6 +82,7 @@ Renders:
 > ```
 >
 > The autobar module provides a {nix:option}`package` option.
+:::
 
 Note how we didn't have to specify the full `services.autobar.package` name.
 
@@ -89,8 +90,7 @@ The {rst:dir}`nix:currentmodule` directive applies to the rest of the document.
 To reset the current module,
 pass `None` as argument.
 
-For example:
-
+:::{admonition} Example
 `````` markdown
 ```{nix:currentmodule} None
 ```
@@ -104,6 +104,7 @@ Renders:
 > ```
 >
 > The autobar module provides a {nix:option}`services.autobar.package` option.
+:::
 
 ## Cross-referencing external Nix objects
 
@@ -134,8 +135,7 @@ With this configuration,
 any cross-referenced object might resolve
 to these external documentation.
 
-For example:
-
+:::{admonition} Example
 ``` markdown
 See the {nix:func}`nixdomainLib.documentObjects`
 and the {nix:pkg}`epnix.epics-base` package.
@@ -145,13 +145,14 @@ Renders:
 
 > See the {nix:func}`nixdomainLib.documentObjects`
 > and the {nix:pkg}`epnix.epics-base` package.
+:::
 
 ### Explicit target
 
 To explicitly select which project to link,
 use the {samp}`\{external+{project}:{role}\}` syntax.
-For example:
 
+:::{admonition} Example
 ``` markdown
 See the {external+epnix:nix:option}`programs.phoebus-client.enable` option.
 ```
@@ -159,6 +160,7 @@ See the {external+epnix:nix:option}`programs.phoebus-client.enable` option.
 Renders:
 
 > See the {external+epnix:nix:option}`programs.phoebus-client.enable` option.
+:::
 
 ### Turning off automatic resolve
 

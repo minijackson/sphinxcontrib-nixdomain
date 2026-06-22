@@ -17,8 +17,7 @@ to open the Markdown source file.
 To document a whole module,
 use the {rst:dir}`nix:automodule` directive.
 
-For example:
-
+:::{admonition} Example
 ``````markdown
 ```{default-domain} nix
 ```
@@ -33,6 +32,7 @@ Renders:
 > :no-contents-entry:
 > :no-index-entry:
 > ```
+:::
 
 (option-example)=
 ## Document a single option
@@ -40,8 +40,7 @@ Renders:
 To document a single option,
 use the {rst:dir}`nix:autooption` directive.
 
-For example:
-
+:::{admonition} Example
 ``````markdown
 ```{default-domain} nix
 ```
@@ -56,3 +55,4 @@ Renders:
 > :no-contents-entry:
 > :no-index-entry:
 > ```
+:::

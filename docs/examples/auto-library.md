@@ -22,8 +22,7 @@ use the {rst:dir}`nix:autolibrary` directive.
 To document every function found,
 don't pass any argument to the directive.
 
-For example:
-
+:::{admonition} Example
 ``````markdown
 ```{default-domain} nix
 ```
@@ -38,14 +37,14 @@ Renders:
 > :no-contents-entry:
 > :no-index-entry:
 > ```
+:::
 
 ### Document a subset
 
 To render only a subset of function,
 pass the desired scope to the directive.
 
-For example:
-
+:::{admonition} Example
 ``````markdown
 ```{default-domain} nix
 ```
@@ -60,6 +59,7 @@ Renders:
 > :no-contents-entry:
 > :no-index-entry:
 > ```
+:::
 
 (function-example)=
 ## Document a single function
@@ -67,8 +67,7 @@ Renders:
 To document a single function,
 use the {rst:dir}`nix:autofunction` directive.
 
-For example:
-
+:::{admonition} Example
 ``````markdown
 ```{default-domain} nix
 ```
@@ -83,3 +82,4 @@ Renders:
 > :no-contents-entry:
 > :no-index-entry:
 > ```
+:::
