@@ -44,9 +44,10 @@ examples/auto-library
 
 reference/configuration
 reference/auto-directives
+reference/utility-directives
+reference/manual
 reference/roles
 reference/nix-library
-reference/manual
 reference/changelog
 ```
 

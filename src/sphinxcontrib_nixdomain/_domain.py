@@ -13,7 +13,12 @@ from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
 from ._package_autodoc import NixAutoPackageDirective, NixAutoPackagesDirective
 from ._utils import EntityType, option_lt, split_attr_path
 from .library import FunctionDirective, LibraryIndex, _function_target
-from .module import OptionDirective, OptionsIndex, _option_target
+from .module import (
+    NixCurrentModuleDirective,
+    OptionDirective,
+    OptionsIndex,
+    _option_target,
+)
 from .package import PackageDirective, _package_target
 
 if TYPE_CHECKING:
@@ -137,6 +142,7 @@ class NixDomain(Domain):
         "function": FunctionDirective,
         "option": OptionDirective,
         "package": PackageDirective,
+        "currentmodule": NixCurrentModuleDirective,
     }
     indices: ClassVar[list[type[Index]]] = [
         LibraryIndex,

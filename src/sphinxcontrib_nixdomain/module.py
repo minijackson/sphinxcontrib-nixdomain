@@ -11,6 +11,7 @@ from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Index, IndexEntry
+from sphinx.util.docutils import SphinxDirective
 
 from ._utils import split_attr_path
 
@@ -155,6 +156,24 @@ class OptionDirective(ObjectDescription):
             return ""
 
         return sig_node["fullname"]
+
+
+class NixCurrentModuleDirective(SphinxDirective):
+    """Make next cross-references relative to the given module."""
+
+    has_content = False
+    required_arguments = 1
+
+    @override
+    def run(self) -> list[nodes.Node]:
+        module = self.arguments[0].strip()
+
+        if module == "None":
+            self.env.ref_context.pop("nix:option", None)
+        else:
+            options = self.env.ref_context.setdefault("nix:option", [])
+            options.append(module)
+        return []
 
 
 def _option_target(fullname: str) -> str:

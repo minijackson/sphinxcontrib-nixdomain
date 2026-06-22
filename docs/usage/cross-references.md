@@ -56,6 +56,55 @@ Is rendered as:
 For more information and other modifiers,
 see Sphinx's {external+sphinx:ref}`Cross-references syntax <xref-syntax>`.
 
+(currentmodule-example)=
+## Cross-referencing relative to a given module
+
+If you are documenting a given NixOS module in Markdown,
+chances are you are going to reference lots of options from that module.
+
+The {rst:dir}`nix:currentmodule` enables you
+to resolve all cross-references relative to a given module,
+which saves characters to type,
+and may make reading easier.
+
+For example:
+
+`````` markdown
+```{nix:currentmodule} services.autobar
+```
+
+The autobar module provides a {nix:option}`package` option.
+``````
+
+Renders:
+
+> ```{nix:currentmodule} services.autobar
+> ```
+>
+> The autobar module provides a {nix:option}`package` option.
+
+Note how we didn't have to specify the full `services.autobar.package` name.
+
+The {rst:dir}`nix:currentmodule` directive applies to the rest of the document.
+To reset the current module,
+pass `None` as argument.
+
+For example:
+
+`````` markdown
+```{nix:currentmodule} None
+```
+
+The autobar module provides a {nix:option}`services.autobar.package` option.
+``````
+
+Renders:
+
+> ```{nix:currentmodule} None
+> ```
+>
+> The autobar module provides a {nix:option}`services.autobar.package` option.
+
 ## Cross-referencing external Nix objects
 
 You can also reference Nix objects from any external documentation

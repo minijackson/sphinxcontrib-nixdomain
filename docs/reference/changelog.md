@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added the {rst:dir}`nix:currentmodule` directive
+  that enables you to cross-reference NixOS options
+  relative to a given module.
+  See {ref}`currentmodule-example`.
 - Added support for the `~` cross-reference modifier.
   See {ref}`cross-ref-modifiers`.
 
