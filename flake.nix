@@ -4,6 +4,7 @@
   inputs = {
     flake-compat.url = "github:NixOS/flake-compat";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixdoc.url = "github:nix-community/nixdoc";
     pyproject-nix = {
       url = "github:nix-community/pyproject.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -15,13 +16,14 @@
       self,
       nixpkgs,
       pyproject-nix,
+      nixdoc,
       ...
     }:
     let
       project = pyproject-nix.lib.project.loadPyproject { projectRoot = ./.; };
       pkgs = import nixpkgs {
         system = "x86_64-linux";
-        overlays = [ self.overlays.default ];
+        overlays = [ self.overlays.default (_: _: { nixdoc = nixdoc.packages.x86_64-linux.default; }) ];
       };
     in
     {
