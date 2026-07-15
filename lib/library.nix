@@ -38,7 +38,7 @@
       name ? "lib",
     }:
     let
-      libraryName = name;
+      libraryName = lib.optional (name != "") name;
 
       pathToURL = nixdomainLib.utils.pathToURL sources;
 
@@ -67,50 +67,22 @@
         in
         recurse [ ] library;
 
-      funcLocation =
-        { name, value }:
-        {
-          name =
-            let
-              libName = lib.optional (libraryName != "") libraryName;
-            in
-            lib.showOption (libName ++ name);
-          value = if value ? file then pathToURL value.file else null;
-        };
-
-      /**
-        The positions of the functions in the library,
-        as required by the `nixdoc` `--locs` option.
-      */
-      locs = lib.pipe funcLocations [
-        (lib.map funcLocation)
-        lib.listToAttrs
-        builtins.toJSON
-        (builtins.toFile "locs.json")
-      ];
-
       /**
         For all declared `sources` add them to the given string as context.
 
-        This is so that the source is added as build input when running nixdoc,
+        This is so that the source is added as build input when running `nixdoc`,
         else it won't be able to read source files.
       */
       addContext = str: lib.pipe str (map lib.addContextFrom (lib.attrValues sources));
 
       /**
-        Command-line arguments for `nixdoc`
+        An element of the "source" part of the `nixdoc` manifest.
       */
-      nixdocInvocation =
-        file: category:
-        addContext (
-          lib.cli.toCommandLineShellGNU { } {
-            inherit file category;
-            json-output = true;
-            description = "";
-            prefix = libraryName;
-            locs = "${locs}";
-          }
-        );
+      nixdocManifestSource = file: path: {
+        # TODO: use the "deep" + include mode? We know the function names
+        inherit path;
+        file = addContext file;
+      };
 
       /**
         Like `listToAttrs`, but add a nice warning on duplicates,
@@ -149,19 +121,24 @@
           acc // { ${name} = value; }
       ) { };
 
-      nixdocInvocations = lib.pipe funcLocations [
+      nixdocManifestSources = lib.pipe funcLocations [
         (lib.map (
           { name, value }:
           {
             name = value.file;
-            value = lib.showOption (lib.sublist 0 (lib.length name - 1) name);
+            value = lib.showOption (libraryName ++ (lib.sublist 0 (lib.length name - 1) name));
           }
         ))
         listToAttrsWarn
-        (lib.mapAttrsToList nixdocInvocation)
+        (lib.mapAttrsToList nixdocManifestSource)
       ];
+
+      nixdocManifest = {
+        version = 1;
+        sources = nixdocManifestSources;
+      };
     in
     {
-      inherit nixdocInvocations;
+      inherit sources nixdocManifest;
     };
 }

@@ -11,24 +11,24 @@
 }:
 
 let
-  /**
-    Create a JSON with a single "library" attribute,
-    which is an attribute set of function name -> functions.
-  */
+  jqSubstituteSources = toString (
+    lib.mapAttrsToList (name: outpath: ''| sub("${outpath}"; "//${name}")'') library.sources
+  );
+
   jqNixDocFilter = ''
     {
       library: (
         [
-          # For each entry of each nixdoc JSON file
-          .[].entries[] |
-          # Concatenate the full name, while taking care of ignoring empty strings
-          ([.prefix, .category, .name] | map(select(. != "")) | join(".")) as $name |
+          # For each entry of the nixdoc JSON output
+          .entries[] |
+          # Substitute Nix store paths with the corresponding `//source` URL authority
+          (.source.file ${jqSubstituteSources}) as $file |
           # Create an object for that function
           {
-            ($name): {
-              name: $name,
-              description: .description | join("\n\n"),
-              location: .location
+            (.attrPath): {
+              name: .attrPath,
+              description: .description,
+              location: [$file, .source.line] | join("#L")
             }
           }
           # Merge the list of objects into a single object
@@ -40,6 +40,7 @@ let
   '';
 
   notLibrary = builtins.toFile "notLibrary.json" (builtins.toJSON { inherit options packages; });
+  nixdocManifest = builtins.toFile "nixdoc-manifest.json" (builtins.toJSON library.nixdocManifest);
 in
 runCommand "nix-objects.json"
   {
@@ -49,12 +50,7 @@ runCommand "nix-objects.json"
     ];
   }
   ''
-    {
-      # A dummy command, in case there's no nixdoc invocation
-      :
-      # TODO: handle failures
-      ${lib.concatMapStringsSep "\n" (args: "nixdoc ${args} || true") library.nixdocInvocations}
-    } | jq -cs '${jqNixDocFilter}' > library.json
+    nixdoc --manifest "${nixdocManifest}" | jq -c '${jqNixDocFilter}' > library.json
 
     # Combine the JSON into a single one
     jq -cs add "${notLibrary}" library.json > $out
