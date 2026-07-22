@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from collections.abc import Generator
     from collections.abc import Set as AbstractSet
 
+    from docutils import nodes
     from docutils.nodes import Element
     from docutils.parsers.rst import Directive
     from sphinx.addnodes import pending_xref
@@ -191,8 +192,8 @@ class NixDomain(Domain):
         target: str,
         node: pending_xref,
         contnode: Element,
-    ) -> list[tuple[str, Element]]:
-        results: list[tuple[str, Element]] = []
+    ) -> list[tuple[str, nodes.reference]]:
+        results: list[tuple[str, nodes.reference]] = []
         for objtype in self.object_types:
             result = self.resolve_xref(
                 env,
@@ -210,14 +211,14 @@ class NixDomain(Domain):
     @override
     def resolve_xref(
         self,
-        _env: BuildEnvironment,
+        env: BuildEnvironment,
         fromdocname: str,
         builder: Builder,
         typ: str,
         target: str,
         node: pending_xref,
         contnode: Element,
-    ) -> Element | None:
+    ) -> nodes.reference | None:
         """Resolve the pending_xref node with the given typ and target."""
         objtypes = self.objtypes_for_role(typ)
 
@@ -245,7 +246,7 @@ class NixDomain(Domain):
         target: str,
         node: pending_xref,
         contnode: Element,
-    ) -> Element | None:
+    ) -> nodes.reference | None:
         object_getter = None
         if objtype == "function":
             context_path = split_attr_path(node.get("nix:function", ""))
