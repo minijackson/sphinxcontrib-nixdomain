@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 object_data = tuple[str, str, str, str, str, int]
 
 
-@dataclass
+@dataclass(kw_only=True, frozen=True)
 class RefEntity:
     """A referenceable Nix entity.
 
@@ -297,7 +297,14 @@ class NixDomain(Domain):
         anchor = _function_target(path)
 
         self.data["functions"].append(
-            RefEntity(path, path, EntityType.FUNCTION, self.env.docname, anchor, 0),
+            RefEntity(
+                name=path,
+                path=path,
+                typ=EntityType.FUNCTION,
+                docname=self.env.docname,
+                anchor=anchor,
+                priority=0,
+            ),
         )
 
     def add_option(self, path: str, _options: dict[str, str]) -> None:
@@ -305,7 +312,14 @@ class NixDomain(Domain):
         anchor = _option_target(path)
 
         self.data["options"].append(
-            RefEntity(path, path, EntityType.OPTION, self.env.docname, anchor, 0),
+            RefEntity(
+                name=path,
+                path=path,
+                typ=EntityType.OPTION,
+                docname=self.env.docname,
+                anchor=anchor,
+                priority=0,
+            ),
         )
 
     def add_package(self, path: str, _options: dict[str, str]) -> None:
@@ -313,10 +327,21 @@ class NixDomain(Domain):
         anchor = _package_target(path)
 
         self.data["packages"].append(
-            RefEntity(path, path, EntityType.PACKAGE, self.env.docname, anchor, 0),
+            RefEntity(
+                name=path,
+                path=path,
+                typ=EntityType.PACKAGE,
+                docname=self.env.docname,
+                anchor=anchor,
+                priority=0,
+            ),
         )
 
     @override
-    def merge_domaindata(self, docnames: AbstractSet[str], otherdata: dict[str, Any]) -> None:
+    def merge_domaindata(
+        self,
+        docnames: AbstractSet[str],
+        otherdata: dict[str, Any],
+    ) -> None:
         for key, values in otherdata.items():
             self.data[key] += values
