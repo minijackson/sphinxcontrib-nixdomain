@@ -84,7 +84,7 @@ class RefEntity:
 T = TypeVar("T")
 
 
-def _last(li: list[T], default: T = None) -> T:
+def _last[T](li: list[T], default: T) -> T:
     return next(iter(li[-1:]), default)
 
 
