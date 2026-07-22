@@ -109,7 +109,7 @@ class FunctionDirective(ObjectDescription):
         signode["ids"].append(_function_target(name))
 
         nix = cast("NixDomain", self.env.get_domain("nix"))
-        nix.add_function(name, {})
+        nix.add_function(name)
 
         if "no-index-entry" not in self.options:
             self.indexnode["entries"].append(

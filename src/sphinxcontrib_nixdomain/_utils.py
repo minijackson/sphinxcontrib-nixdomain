@@ -15,7 +15,7 @@ class EntityType(StrEnum):
     PACKAGE = "package"
 
     def directive_name(self) -> str:
-        return str(self)
+        return self.value
 
     def human_name(self) -> str:
         match self:

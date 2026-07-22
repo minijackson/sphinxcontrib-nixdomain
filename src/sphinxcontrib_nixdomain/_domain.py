@@ -149,24 +149,24 @@ class NixDomain(Domain):
         LibraryIndex,
         OptionsIndex,
     ]
-    initial_data: ClassVar[dict[str, Any]] = {
-        "functions": [],
-        "options": [],
-        "packages": [],
+    initial_data: ClassVar[dict[str, dict[str, RefEntity]]] = {
+        "functions": {},
+        "options": {},
+        "packages": {},
     }
-    data_version = 0
+    data_version = 1
 
     def get_functions(self) -> Generator[RefEntity]:
         """Get all functions in this domain."""
-        yield from self.data["functions"]
+        yield from self.data["functions"].values()
 
     def get_options(self) -> Generator[RefEntity]:
         """Get all options in this domain."""
-        yield from self.data["options"]
+        yield from self.data["options"].values()
 
     def get_packages(self) -> Generator[RefEntity]:
         """Get all options in this domain."""
-        yield from self.data["packages"]
+        yield from self.data["packages"].values()
 
     def get_entities(self) -> Generator[RefEntity]:
         """Get all entities in this domain."""
@@ -289,53 +289,56 @@ class NixDomain(Domain):
 
         return None
 
-    def add_function(
-        self,
-        path: str,
-        _arguments: dict[str, str],
-    ) -> None:
+    def note_object(self, typ: EntityType, path: str, anchor: str) -> None:
+        if path in self.data[typ.value]:
+            pass
+
+        self.data[typ.value][path] = RefEntity(
+            name=path,
+            path=path,
+            typ=EntityType.FUNCTION,
+            docname=self.env.docname,
+            anchor=anchor,
+            priority=0,
+        )
+
+    def add_function(self, path: str) -> None:
         """Add a new function to the domain."""
         anchor = _function_target(path)
 
-        self.data["functions"].append(
-            RefEntity(
-                name=path,
-                path=path,
-                typ=EntityType.FUNCTION,
-                docname=self.env.docname,
-                anchor=anchor,
-                priority=0,
-            ),
+        self.data["functions"][path] = RefEntity(
+            name=path,
+            path=path,
+            typ=EntityType.FUNCTION,
+            docname=self.env.docname,
+            anchor=anchor,
+            priority=0,
         )
 
     def add_option(self, path: str, _options: dict[str, str]) -> None:
         """Add a new module option to the domain."""
         anchor = _option_target(path)
 
-        self.data["options"].append(
-            RefEntity(
-                name=path,
-                path=path,
-                typ=EntityType.OPTION,
-                docname=self.env.docname,
-                anchor=anchor,
-                priority=0,
-            ),
+        self.data["options"][path] = RefEntity(
+            name=path,
+            path=path,
+            typ=EntityType.OPTION,
+            docname=self.env.docname,
+            anchor=anchor,
+            priority=0,
         )
 
     def add_package(self, path: str, _options: dict[str, str]) -> None:
         """Add a new module option to the domain."""
         anchor = _package_target(path)
 
-        self.data["packages"].append(
-            RefEntity(
-                name=path,
-                path=path,
-                typ=EntityType.PACKAGE,
-                docname=self.env.docname,
-                anchor=anchor,
-                priority=0,
-            ),
+        self.data["packages"][path] = RefEntity(
+            name=path,
+            path=path,
+            typ=EntityType.PACKAGE,
+            docname=self.env.docname,
+            anchor=anchor,
+            priority=0,
         )
 
     @override
@@ -344,5 +347,8 @@ class NixDomain(Domain):
         docnames: AbstractSet[str],
         otherdata: dict[str, Any],
     ) -> None:
-        for key, values in otherdata.items():
-            self.data[key] += values
+        for obj_type, objects in otherdata.items():
+            if obj_type == "version":
+                continue
+            for path, obj in objects.items():
+                self.data[obj_type][path] = obj
