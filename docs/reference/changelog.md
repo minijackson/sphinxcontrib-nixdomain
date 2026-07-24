@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+  [Unreleased]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.6...main
+
+## [0.1.6] --- 2026-07-24
+
 ### Added
 
 - Added the {rst:dir}`nix:currentmodule` directive
@@ -25,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed an issue where the list of internal objects
   would grow across multiple Sphinx runs.
 
-  [Unreleased]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.5...main
+  [0.1.6]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.5...v0.1.6
 
 ## [0.1.5] --- 2026-06-17
 
