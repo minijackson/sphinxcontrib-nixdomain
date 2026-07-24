@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.metadata
 import os
 from typing import TYPE_CHECKING
 
@@ -45,7 +46,7 @@ def setup(app: Sphinx) -> ExtensionMetadata:
     app.connect("config-inited", load_object_files)
 
     return {
-        "version": "0.1.0",
+        "version": importlib.metadata.version("sphinxcontrib-nixdomain"),
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }
