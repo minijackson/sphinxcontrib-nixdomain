@@ -100,5 +100,13 @@
         path = ./templates/example;
         description = "An example project using sphinxcontrib-nixdomain";
       };
+
+      devShells.x86_64-linux.default = pkgs.mkShell {
+        packages = with pkgs; [
+          uv
+          gnumake
+        ];
+        env.NIXDOMAIN_OBJECTS = self.packages.x86_64-linux.exampleObjectsJson;
+      };
     };
 }
