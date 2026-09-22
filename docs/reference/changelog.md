@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed an issue with `listOf submodule` options,
+  where they couldn't be referenced,
+  and were displayed without a `.*`.
+
   [Unreleased]: https://github.com/minijackson/sphinxcontrib-nixdomain/compare/v0.1.6...main
 
 ## [0.1.6] --- 2026-07-24
