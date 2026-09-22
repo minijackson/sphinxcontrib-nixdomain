@@ -18,6 +18,18 @@
   options.services.autobar = {
     enable = lib.mkEnableOption "the Bar service";
 
+    aaa = lib.mkOption {
+      type = lib.types.listOf (lib.types.submodule {
+        options.bbb = lib.mkEnableOption "bla";
+      });
+    };
+
+    ccc = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.submodule {
+        options.ddd = lib.mkEnableOption "bla";
+      });
+    };
+
     package = lib.mkPackageOption pkgs "hello" { };
 
     openFirewall = lib.mkOption {

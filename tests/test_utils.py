@@ -63,6 +63,8 @@ def test_attr_path_split() -> None:
         "enable",
     ]
 
+    assert split_attr_path("a.b.*.c") == ["a", "b", "*", "c"]
+
 
 def test_part_of_scope() -> None:
     assert is_part_of_scope([], ["a"], recursive=True)

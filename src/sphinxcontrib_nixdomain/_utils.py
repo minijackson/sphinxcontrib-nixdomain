@@ -44,7 +44,7 @@ def option_lt(left: str, right: str) -> bool:
 
 IDENTIFIER = r"(?:<?[a-zA-Z_][a-zA-Z0-9_'-]*>?)"
 STR = r'(?:"(?:[^"\\]|\\.)*")'
-ATTRIBUTE = re.compile(f"{STR}|{IDENTIFIER}", re.ASCII)
+ATTRIBUTE = re.compile(rf"{STR}|{IDENTIFIER}|\*", re.ASCII)
 
 
 def split_attr_path(path: str) -> list[str]:
