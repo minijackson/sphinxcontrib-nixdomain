@@ -6,12 +6,14 @@ import importlib.metadata
 import os
 from typing import TYPE_CHECKING
 
+import sphinx.directives.admonitions
 from sphinx.util import logging
 
 from ._data import load_object_files
 from ._domain import NixDomain
 
 if TYPE_CHECKING:
+    from docutils import nodes
     from sphinx.application import Sphinx
     from sphinx.config import Config
     from sphinx.util.typing import ExtensionMetadata
@@ -31,6 +33,14 @@ def objects_json_files_from_env(_config: Config) -> list[str]:
     return []
 
 
+class Example(sphinx.directives.admonitions.Admonition):
+    required_arguments = 0
+
+    def run(self) -> list[nodes]:
+        self.arguments.append("Example")
+        return super().run()
+
+
 def setup(app: Sphinx) -> ExtensionMetadata:
     """Set up the Nix Sphinx domain."""
     app.add_domain(NixDomain)
@@ -44,6 +54,13 @@ def setup(app: Sphinx) -> ExtensionMetadata:
     app.add_config_value("nixdomain_linkcode_resolve", None, "")
 
     app.connect("config-inited", load_object_files)
+
+    app.add_directive(".caution", sphinx.directives.admonitions.Caution)
+    app.add_directive(".important", sphinx.directives.admonitions.Important)
+    app.add_directive(".note", sphinx.directives.admonitions.Note)
+    app.add_directive(".tip", sphinx.directives.admonitions.Tip)
+    app.add_directive(".warning", sphinx.directives.admonitions.Warning)
+    app.add_directive(".example", Example)
 
     return {
         "version": importlib.metadata.version("sphinxcontrib-nixdomain"),
