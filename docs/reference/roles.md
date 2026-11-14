@@ -63,3 +63,35 @@ Renders:
 > See the {nix:func}`exampleLib.myFunc` function.
 :::
 ::::::
+
+::::::{rst:role} nix:nixos-option
+Create a link to a NixOS option that is defined in Nixpkgs.
+
+It creates a link to the NixOS options search page.
+
+:::{admonition} Example
+``` markdown
+See the {nix:nixos-option}`environment.systemPackages` option.
+```
+
+Renders:
+
+> See the {nix:nixos-option}`environment.systemPackages` option.
+:::
+::::::
+
+::::::{rst:role} nix:nixpkgs-pkg
+Create a link to a Nix package that is defined in Nixpkgs.
+
+It creates a link to the NixOS packages search page.
+
+:::{admonition} Example
+``` markdown
+See the {nix:nixpkgs-pkg}`htop` package.
+```
+
+Renders:
+
+> See the {nix:nixpkgs-pkg}`htop` package.
+:::
+::::::

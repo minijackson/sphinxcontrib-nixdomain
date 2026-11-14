@@ -8,6 +8,7 @@ from sphinx.roles import XRefRole
 from sphinx.util import logging
 from sphinx.util.nodes import make_refnode
 
+from ._extra_roles import NixosOption, NixpkgsPkg
 from ._library_autodoc import NixAutoFunctionDirective, NixAutoLibraryDirective
 from ._module_autodoc import NixAutoModuleDirective, NixAutoOptionDirective
 from ._package_autodoc import NixAutoPackageDirective, NixAutoPackagesDirective
@@ -132,6 +133,8 @@ class NixDomain(Domain):
         "option": NixXRefRole(warn_dangling=True),
         "pkg": NixXRefRole(warn_dangling=True),
         "obj": NixXRefRole(warn_dangling=True),
+        "nixpkgs-pkg": NixpkgsPkg(),
+        "nixos-option": NixosOption(),
     }
     directives: ClassVar[dict[str, type[Directive]]] = {
         "autolibrary": NixAutoLibraryDirective,

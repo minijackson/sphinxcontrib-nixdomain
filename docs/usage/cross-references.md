@@ -108,6 +108,36 @@ Renders:
 
 ## Cross-referencing external Nix objects
 
+### From Nixpkgs/NixOS
+
+If you want to reference a NixOS options that is defined in Nixpkgs,
+you can use the {rst:role}`nix:nixos-option` role.
+
+If you want to reference a package from Nixpkgs,
+you can use the {rst:role}`nix:nixpkgs-pkg` role.
+
+Both will create links to NixOS search pages.
+For example:
+
+``` markdown
+You can add the {nix:nixpkgs-pkg}`htop` package
+to your {nix:nixos-option}`environment.systemPackages` NixOS option.
+```
+
+Renders:
+
+> You can add the {nix:nixpkgs-pkg}`htop` package
+> to your {nix:nixos-option}`environment.systemPackages` NixOS option.
+
+:::{note}
+Currently,
+those roles won't check
+if the option or package actually exists in Nixpkgs.
+It will only create a link to NixOS search pages.
+:::
+
+### From another Sphinx project
+
 You can also reference Nix objects from any external documentation
 that uses Sphinx and `sphinxcontrib-nixdomain`,
 by using the {external+sphinx:ref}`Intersphinx <ext-intersphinx>` built-in Sphinx extension.
