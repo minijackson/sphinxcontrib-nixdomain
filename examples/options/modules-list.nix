@@ -1,3 +1,4 @@
 [
   ./autobar.nix
+  ./misc.nix
 ]
