@@ -3,6 +3,8 @@ from docutils.nodes import Node, system_message
 from sphinx.util import encode_uri
 from sphinx.util.docutils import ReferenceRole
 
+from ._nixpkgs_search import search_nixos_option, search_nixpkgs_package
+
 
 class NixpkgsPkg(ReferenceRole):
     """Link to a Nix package defined in Nixpkgs."""
@@ -22,8 +24,18 @@ class NixpkgsPkg(ReferenceRole):
             classes=["nix", "nix-nixpkgs-pkg"],
         )
 
-        # TODO: return an error if the option isn't found in Nixpkgs
-        return [reference], []
+        system_messages = []
+        if not search_nixpkgs_package(
+            self.target,
+            self.config.nixdomain_default_channel,
+        ):
+            system_messages.append(
+                self.inliner.reporter.error(
+                    f"couldn't find package {self.target} in Nixpkgs",
+                ),
+            )
+
+        return [reference], system_messages
 
 
 class NixosOption(ReferenceRole):
@@ -44,5 +56,16 @@ class NixosOption(ReferenceRole):
             classes=["nix", "nix-nixos-option"],
         )
 
-        # TODO: return an error if the option isn't found in NixOS
-        return [reference], []
+        system_messages = []
+        # TODO: catch exceptions
+        if not search_nixos_option(
+            self.target,
+            self.config.nixdomain_default_channel,
+        ):
+            system_messages.append(
+                self.inliner.reporter.error(
+                    f"couldn't find package {self.target} in Nixpkgs",
+                ),
+            )
+
+        return [reference], system_messages

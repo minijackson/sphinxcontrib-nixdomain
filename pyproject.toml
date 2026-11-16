@@ -28,7 +28,9 @@ classifiers = [
   "Topic :: Documentation :: Sphinx",
 ]
 dependencies = [
+    "elasticsearch>=7.0.0,<7.14.0",
     "pydantic>=2.0.0",
+    "requests>=2.34.2",
     "sphinx>=7.4.0",
 ]
 

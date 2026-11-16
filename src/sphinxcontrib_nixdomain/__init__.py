@@ -28,9 +28,19 @@ def objects_json_files_from_env(_config: Config) -> list[str]:
         return object_files.split(":")
 
     logger.warning(
-        "No $NIXDOMAIN_OBJECTS file specified, no Nix object will be documented.",
+        "nixdomain: No $NIXDOMAIN_OBJECTS file specified, "
+        "no Nix object will be documented.",
     )
     return []
+
+
+def _default_offline(_config: Config) -> bool:
+    return bool(os.environ.get("NIX_BUILD_TOP") and not os.environ.get("IN_NIX_SHELL"))
+
+
+def _config_messages(_app: Sphinx, config: Config):
+    if not config.nixdomain_offline:
+        logger.info("nixdomain: disabling online features.")
 
 
 class Example(sphinx.directives.admonitions.Admonition):
@@ -52,8 +62,11 @@ def setup(app: Sphinx) -> ExtensionMetadata:
     )
     # Not "html" here, because we'd get a warning about the function being unpickable
     app.add_config_value("nixdomain_linkcode_resolve", None, "")
+    app.add_config_value("nixdomain_offline", _default_offline, "html", bool)
+    app.add_config_value("nixdomain_default_channel", "nixos-unstable", "html", str)
 
     app.connect("config-inited", load_object_files)
+    app.connect("config-inited", _config_messages)
 
     app.add_directive(".caution", sphinx.directives.admonitions.Caution)
     app.add_directive(".important", sphinx.directives.admonitions.Important)

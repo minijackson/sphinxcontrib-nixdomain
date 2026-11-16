@@ -53,3 +53,10 @@ def nixdomain_linkcode_resolve(path: str) -> str:
     return ""
 ```
 ::::::
+
+::::::{confval} nixdomain_default_channel
+:type: {code-py}`str`
+:default: {code-py}`nixos-unstable`
+
+TODO
+::::::

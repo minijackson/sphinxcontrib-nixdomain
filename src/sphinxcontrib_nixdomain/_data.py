@@ -112,7 +112,7 @@ _OBJECTS: Objects = Objects()
 
 def load_object_files(_app: Sphinx, config: Config) -> None:
     for file in config.nixdomain_objects:
-        logger.info("loading Nix objects in %s... ", file, nonl=True, color="bold")
+        logger.info("nixdomain: loading Nix objects in %s... ", file, nonl=True, color="bold")
         global _OBJECTS
         _OBJECTS = Objects.model_validate_json(Path(file).read_text())
         logger.info(
